@@ -11,5 +11,10 @@ urlpatterns = [
     path('logout/',views.worker_logout, name='logout'),
     path('workers/<int:service_id>/', views.worker_list, name='worker_list'),
     # 1-3-25
-    path('book_worker/<int:worker_id>/',views. book_worker, name='book_worker')
+    path('book_worker/<int:worker_id>/',views. book_worker, name='book_worker'),
+    path('my_bookings/', views.my_bookings, name='my_bookings'),
+    path('profile/', views.user_my_profile, name='user_my_profile'),
+    path('profile/edit/', views.edit_user_profile, name='edit_user_profile'),
+
 ]
+

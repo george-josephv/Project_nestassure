@@ -1,0 +1,146 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOOKING STATUS</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        /* Header Styling */
+        .task-header {
+            background-color: black;
+            color: white;
+        }
+
+        .assigned-header {
+            background-color: teal;
+            color: white;
+        }
+
+        .priority-header {
+            background-color: orange;
+            color: white;
+        }
+
+        .status-header {
+            background-color: red;
+            color: white;
+        }
+
+        /* Status Labels */
+        .status-pending {
+            background-color: orange;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .status-accepted {
+            background-color: blue;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .status-rejected {
+            background-color: red;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .status-completed {
+            background-color: green;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        /* Zebra Striping */
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>BOOKING STATUS</h2>
+
+        {% if bookings %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="task-header">Worker</th>
+                        <th class="assigned-header">Service</th>
+                        <th class="priority-header">Expected Date</th>
+                        <th class="status-header">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr>
+                        <td>{{ booking.worker.user.username }}</td>
+                        <td>{{ booking.service.service_name }}</td>
+                        <td>{{ booking.expected_date }}</td>
+                        <td>
+                            {% if booking.status == "pending" %}
+                                <span class="status-pending">Pending</span>
+                            {% elif booking.status == "accepted" %}
+                                <span class="status-accepted">Accepted</span>
+                            {% elif booking.status == "rejected" %}
+                                <span class="status-rejected">Rejected</span>
+                            {% elif booking.status == "completed" %}
+                                <span class="status-completed">Completed</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p style="text-align: center;">No bookings found.</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>

@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import BookingForm
+from .forms import BookingForm, EditProfileForm
 from .models import User, Service, Worker, Booking
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -120,3 +120,36 @@ def book_worker(request, worker_id):
         "worker": worker, 
         "form": form
     })
+   
+@login_required
+def my_bookings(request):
+    bookings = Booking.objects.filter(user=request.user)  # Get only logged-in user's bookings
+
+    if request.method == "POST":
+        booking_id = request.POST.get("booking_id")
+        status = request.POST.get("status")  # "completed" or "pending"
+        
+        booking = get_object_or_404(Booking, id=booking_id, user=request.user)
+        booking.status = status
+        booking.save()
+        
+        messages.success(request, "Booking status updated successfully!")
+        return redirect("my_bookings")  # Refresh page after submission
+
+    return render(request, "myapp/my_bookings.html", {"bookings": bookings})
+
+@login_required
+def user_my_profile(request):
+    return render(request, 'myapp/user_my_profile.html', {'user': request.user})
+
+@login_required
+def edit_user_profile(request):
+    if request.method == "POST":
+        form = EditProfileForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('user_my_profile')  # Redirect to profile page after saving
+    else:
+        form = EditProfileForm(instance=request.user)
+
+    return render(request, 'myapp/edit_user_profile.html', {'form': form})

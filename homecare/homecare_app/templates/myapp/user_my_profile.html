@@ -1,3 +1,4 @@
+{% comment %} user profile  {% endcomment %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,154 +7,146 @@
     <title>User Profile</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background: rgb(0, 0, 0);
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #f7b733, #fc4a1a);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            padding: 20px;
         }
 
         .profile-container {
-            width: 90%;
-            max-width: 400px;
+            width: 100%;
+            max-width: 420px;
             background: white;
             border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
             position: relative;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .profile-container:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(185, 149, 19, 0.73);
         }
 
         .header {
-            background: linear-gradient(to right, rgb(240, 185, 18), rgb(255, 157, 0));
-            padding: 40px 15px 70px;
+            background: #ff9500;
+            padding: 50px 20px 60px;
             color: white;
-            font-size: 16px;
+            font-size: 18px;
             position: relative;
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
-            display: flex;
-            align-items: flex-start; /* Align content to the top */
-            justify-content: space-between;
-            padding-bottom: 100px; /* Add space for the image */
         }
-        
+
         .header h2 {
             margin: 0;
-            font-size: 22px;
+            font-size: 24px;
             position: absolute;
-            top: 25px;
-            left: 40px;
-            text-align: left;
+            top: 26px;
+            left: 20%;
+            transform: translateX(-50%);
         }
 
         .back-btn {
             position: absolute;
-            left: 15px;
-            top: 12px;
+            left: 10px;
+            top: 5px;
             color: white;
             font-size: 18px;
             text-decoration: none;
+            
         }
 
         .profile-photo {
-            width: 120px;
-            height: 120px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
-            border: 4px solid white;
+            border: white;
             object-fit: cover;
+            background: solid white;
             position: absolute;
-            top: 60px;
+            top: 50px;
             left: 50%;
             transform: translateX(-50%);
-            background: white;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-
         .profile-photo:hover {
             transform: translateX(-50%) scale(1.1);
             box-shadow: 0 4px 10px rgb(0, 0, 0);
         }
+        
 
         .profile-info {
-            padding: 70px 15px 20px;
+            padding: 90px 20px 20px;
         }
 
-        .profile-info p {
+        .info-box {
+            background:rgba(255, 149, 0, 0.18);
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            justify-content: start;
-            padding: 8px 10px;
-            font-size: 14px;
+            font-size: 15px;
+            font-weight: bold;
             color: #333;
-            border-bottom: 1px solid #eee;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: left;
         }
 
-        .profile-info p i {
-            color: rgb(204, 147, 15);
-            margin-right: 8px;
-            font-size: 16px;
+        .info-box i {
+            color: #ff9500;
+            font-size: 18px;
+            margin-right: 12px;
+            width: 20px;  /* Ensures all icons are aligned */
+            text-align: center;
+        }
+
+        .info-text {
+            flex: 1; /* Allows the text to take the remaining space */
         }
 
         .edit-btn {
             display: block;
-            width: 80%;
-            margin: 15px auto;
+            width: 90%;
+            margin: 20px auto;
             padding: 12px;
-            background: rgb(203, 194, 17);
+            background: #ff9500;
             color: white;
-            font-size: 15px;
+            font-size: 16px;
+            font-weight: bold;
             border: none;
-            border-radius: 20px;
+            border-radius: 25px;
             text-align: center;
             text-decoration: none;
+            transition: 0.3s;
         }
 
         .edit-btn:hover {
-            background: rgb(255, 140, 0);
+            background: #e08600;
+            transform: scale(1.05);
         }
 
-        /* Responsive Design */
-        @media (max-width: 480px) {
-            body {
-                height: auto;
-                padding: 20px 0;
-            }
-
-            .profile-container {
-                width: 99%;
-            }
-
+        @media screen and (max-width: 480px) {
             .header {
-                padding: 30px 15px 60px;
-            }
-
-            .header h2 {
-                font-size: 20px;
+                padding: 40px 15px 50px;
             }
 
             .profile-photo {
                 width: 100px;
                 height: 100px;
-                top: 50px;
             }
 
             .profile-info {
-                padding: 60px 10px 20px;
+                padding: 70px 10px 20px;
             }
 
-            .profile-info p {
-                font-size: 13px;
+            .info-box {
+                font-size: 14px;
+                padding: 10px;
             }
 
             .edit-btn {
@@ -178,20 +171,20 @@
     {% endif %}
 
     <div class="profile-info">
-        <p><i class="fas fa-user"></i> {{ user.username }}</p>
-        <p><i class="fas fa-calendar"></i> {{ user.dob|default:"N/A" }}</p>
-        <p><i class="fas fa-phone"></i> {{ user.phone_number|default:"N/A" }}</p>
-        <p><i class="fas fa-envelope"></i> {{ user.email|default:"N/A" }}</p>
-        <p><i class="fas fa-map-marker-alt"></i> {{ user.state|default:"N/A" }}, {{ user.district|default:"N/A" }}</p>
-        <p><i class="fas fa-home"></i> {{ user.housename|default:"N/A" }}</p>
+        <div class="info-box"><i class="fas fa-user"></i> <span class="info-text"> {{ user.username }}</span></div>
+        <div class="info-box"><i class="fas fa-calendar"></i> <span class="info-text"> {{ user.dob|default:"Not Provided" }}</span></div>
+        <div class="info-box"><i class="fas fa-tint"></i> <span class="info-text"> {{ user.blood_group|default:"Not Provided" }}</span></div>
+        <div class="info-box"><i class="fas fa-phone"></i> <span class="info-text"> {{ user.phone_number|default:"Not Provided" }}</span></div>
+        <div class="info-box"><i class="fas fa-envelope"></i> <span class="info-text"> {{ user.email|default:"Not Provided" }}</span></div>
+        <div class="info-box"><i class="fas fa-map-marker-alt"></i> <span class="info-text"> {{ user.state|default:"N/A" }}, {{ user.district|default:"N/A" }}, {{ user.place|default:"N/A" }}</span></div>
+        <div class="info-box"><i class="fas fa-home"></i> <span class="info-text"> {{ user.housename|default:"Not Provided" }}</span></div>
+
         {% if user.role == "worker" %}
-            <p><i class="fas fa-briefcase"></i> Worker</p>
-        {% else %}
-         
+            <div class="info-box"><i class="fas fa-briefcase"></i> <span class="info-text">Role: Worker</span></div>
         {% endif %}
+        
         <a href="{% url 'edit_user_profile' %}" class="edit-btn">Edit Profile</a>
     </div>
-
 </div>
 
 </body>

@@ -1,10 +1,11 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .models import User, Service, Worker
+from .forms import BookingForm
+from .models import User, Service, Worker, Booking
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-
+from datetime import date
 
 def landing_page(request):
     return render(request, 'myapp/landingpage.html')  # No need to specify 'myapp/' in the template path
@@ -28,6 +29,7 @@ def login_view(request):
 
     return render(request, "myapp/login.html")  # Render login page if not authenticated
 @login_required
+
 def user_dashboard(request):
     return render(request, 'myapp/user_dashboard.html')
 def user_logout(request):
@@ -80,3 +82,34 @@ def worker_list(request, service_id):
     service = get_object_or_404(Service, id=service_id)
     workers = Worker.objects.filter(services__id=service_id)  # Corrected query
     return render(request, 'myapp/worker_list.html', {'service': service, 'workers': workers})
+
+
+@login_required
+def book_worker(request, worker_id):
+    worker = get_object_or_404(Worker, id=worker_id)
+
+    if request.method == "POST":
+        form = BookingForm(request.POST)
+        if form.is_valid():
+            booking = form.save(commit=False)
+            booking.user = request.user
+            booking.worker = worker
+
+            # Assign a service to the booking
+            service = worker.services.first()  # Assuming a worker has at least one service
+            if service:
+                booking.service = service
+            else:
+                messages.error(request, "This worker has no associated services.")
+                return redirect("worker_list", service_id=worker.services.first().id)
+
+            booking.save()
+            messages.success(request, "Booking confirmed successfully!")
+            return redirect("user_dashboard")  # Redirect after booking
+    else:
+        form = BookingForm()
+
+    return render(request, "myapp/book_worker.html", {
+        "worker": worker, 
+        "form": form
+    })

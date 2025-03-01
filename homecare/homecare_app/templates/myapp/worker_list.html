@@ -157,7 +157,7 @@
                             <small><i class="fas fa-envelope"></i>Email: {{ worker.user.email }}</small>
                         </div>
                         <!-- Booking Button -->
-                        <a href="#" class="btn book-btn">Book Now</a>
+                        <a href="{% url 'book_worker' worker.id %}" class="btn book-btn">Book Now</a>
                     </div>
                 </div>
             {% empty %}

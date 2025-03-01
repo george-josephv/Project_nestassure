@@ -28,11 +28,18 @@ def login_view(request):
             messages.error(request, "Invalid username or password")
 
     return render(request, "myapp/login.html")  # Render login page if not authenticated
-@login_required
 
+@login_required
 def user_dashboard(request):
     return render(request, 'myapp/user_dashboard.html')
 def user_logout(request):
+    logout(request)
+    return render(request, 'myapp/landingpage.html')
+
+@login_required
+def worker_dashboard(request):
+    return render(request, 'myapp/workerdashome.html')
+def worker_logout(request):
     logout(request)
     return render(request, 'myapp/landingpage.html')
 

@@ -14,7 +14,7 @@
 
         body {
             font-family: Arial, sans-serif;
-            background: #f5f5f5;
+            background: #ff9500;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -23,7 +23,7 @@
         }
 
         .edit-container {
-            width: 100%;
+            width: 150%;
             max-width: 400px;
             background: white;
             border-radius: 15px;
@@ -34,8 +34,8 @@
         }
 
         .header {
-            background:rgb(207, 179, 20);
-            padding: 40px 15px 60px;
+            background: #ff9500;
+            padding: 40px 25px 80px;
             color: white;
             font-size: 16px;
             position: relative;
@@ -46,14 +46,14 @@
             font-size: 22px;
             position: absolute;
             top: 25px;
-            left: 50%;
+            left:20%;
             transform: translateX(-50%);
         }
 
         .back-btn {
             position: absolute;
-            left: 15px;
-            top: 12px;
+            left: 10px;
+            top: 5px;
             color: white;
             font-size: 18px;
             text-decoration: none;
@@ -65,19 +65,16 @@
         }
 
         .profile-photo {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             border: 3px solid white;
             object-fit: cover;
             background: white;
-            cursor: pointer;
         }
-
-        .change-picture {
-            font-size: 12px;
-            color: #555;
-            margin-top: 5px;
+        .profile-photo:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .form-container {
@@ -103,6 +100,24 @@
             border: 1px solid #ccc;
             border-radius: 8px;
             font-size: 14px;
+        }
+
+        .file-upload-btn {
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            background: #333;
+            color: white;
+            font-size: 14px;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .file-upload-btn:hover {
+            background: #555;
         }
 
         .edit-btn {
@@ -144,20 +159,16 @@
 
 <div class="edit-container">
     <div class="header">
-        <a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-left"></i></a>
-        <h2>Edit Profile</h2>
+        <a href="{% url 'user_my_profile' %}" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+        <h2>PROFILE EDIT</h2>
     </div>
 
     <div class="profile-container">
-        <label for="profile-input">
-            {% if user.profile_picture %}
-                <img src="{{ user.profile_picture.url }}" alt="User Photo" class="profile-photo" id="profile-img">
-            {% else %}
-                <img src="https://via.placeholder.com/100" alt="No Photo" class="profile-photo" id="profile-img">
-            {% endif %}
-        </label>
-        <input type="file" name="profile_picture" id="profile-input" accept="image/*" onchange="previewImage(event)">
-        <p class="change-picture">Click on the image to change</p>
+        {% if user.profile_picture %}
+            <img src="{{ user.profile_picture.url }}" alt="User Photo" class="profile-photo" id="profile-img">
+        {% else %}
+            <img src="https://via.placeholder.com/100" alt="No Photo" class="profile-photo" id="profile-img">
+        {% endif %}
     </div>
 
     <div class="form-container">
@@ -165,58 +176,53 @@
             {% csrf_token %}
 
             <div class="form-group">
-                <label>Username</label>
-                <input type="text" name="username" value="{{ user.username }}" required>
+                <label for="profile-input">Change Profile Picture</label>
+                <input type="file" name="profile_picture" id="profile-input" accept="image/*">
+                <button type="button" class="file-upload-btn" onclick="document.getElementById('profile-input').click();">Upload Image</button>
             </div>
 
             <div class="form-group">
-                <label>Email</label>
-                <input type="email" name="email" value="{{ user.email }}" required>
+                <label for="id_username">Username</label>
+                {{ form.username }}
             </div>
 
             <div class="form-group">
-                <label>Phone Number</label>
-                <input type="text" name="phone_number" value="{{ user.phone_number }}">
+                <label for="id_email">Email</label>
+                {{ form.email }}
             </div>
 
             <div class="form-group">
-                <label>Date of Birth</label>
-                <input type="date" name="dob" value="{{ user.dob|date:'Y-m-d' }}">
+                <label for="id_phone_number">Phone Number</label>
+                {{ form.phone_number }}
             </div>
 
             <div class="form-group">
-                <label>Blood Group</label>
-                <select name="blood_group">
-                    <option value="">Select</option>
-                    <option value="A+" {% if user.blood_group == "A+" %}selected{% endif %}>A+</option>
-                    <option value="A-" {% if user.blood_group == "A-" %}selected{% endif %}>A-</option>
-                    <option value="B+" {% if user.blood_group == "B+" %}selected{% endif %}>B+</option>
-                    <option value="B-" {% if user.blood_group == "B-" %}selected{% endif %}>B-</option>
-                    <option value="O+" {% if user.blood_group == "O+" %}selected{% endif %}>O+</option>
-                    <option value="O-" {% if user.blood_group == "O-" %}selected{% endif %}>O-</option>
-                    <option value="AB+" {% if user.blood_group == "AB+" %}selected{% endif %}>AB+</option>
-                    <option value="AB-" {% if user.blood_group == "AB-" %}selected{% endif %}>AB-</option>
-                </select>
+                <label for="id_dob">Date of Birth</label>
+                {{ form.dob }}
+            </div>
+            <div class="form-group">
+                <label for="id_blood_group">Blood Group</label>
+                {{ form.blood_group }}
             </div>
 
             <div class="form-group">
-                <label>State</label>
-                <input type="text" name="state" value="{{ user.state }}">
+                <label for="id_state">State</label>
+                {{ form.state }}
             </div>
 
             <div class="form-group">
-                <label>District</label>
-                <input type="text" name="district" value="{{ user.district }}">
+                <label for="id_district">District</label>
+                {{ form.district }}
             </div>
 
             <div class="form-group">
-                <label>Place</label>
-                <input type="text" name="place" value="{{ user.place }}">
+                <label for="id_place">Place</label>
+                {{ form.place }}
             </div>
 
             <div class="form-group">
-                <label>House Name</label>
-                <input type="text" name="housename" value="{{ user.housename }}">
+                <label for="id_housename">House Name</label>
+                {{ form.housename }}
             </div>
 
             <button type="submit" class="edit-btn">Update Profile</button>
@@ -225,14 +231,13 @@
 </div>
 
 <script>
-    function previewImage(event) {
+    document.getElementById("profile-input").addEventListener("change", function(event) {
         var reader = new FileReader();
         reader.onload = function(){
-            var output = document.getElementById('profile-img');
-            output.src = reader.result;
-        }
+            document.getElementById("profile-img").src = reader.result;
+        };
         reader.readAsDataURL(event.target.files[0]);
-    }
+    });
 </script>
 
 </body>

@@ -5,24 +5,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Worker Dashboard</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+            <!-- Google fonts-->
+     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
+
+    
     <style>
+        
+        /* General Body Styling */
         body {
             display: flex;
+            flex-direction: column;
             height: 100vh;
             overflow-x: hidden;
-            flex-direction: column;
         }
+
+        /* Navbar Styling */
         .navbar {
             width: 100%;
-            background: #343a40;
-            color: white;
+            background: #000000;
+            color: rgb(255, 255, 255);
             padding: 10px;
             display: flex;
             align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1001; /* Ensures navbar is above everything */
         }
+
         .menu-btn {
             background: none;
             border: none;
@@ -33,25 +46,31 @@
             display: flex;
             align-items: center;
         }
+
         .navbar h4 {
             margin: 0;
         }
+
+        /* Sidebar Styling */
         .sidebar {
             width: 250px;
-            background: #343a40;
-            color: white;
+            background: #101112;
+            color: rgb(255, 255, 255);
             padding: 15px;
             height: 100vh;
             position: fixed;
             left: -250px;
             transition: all 0.3s;
             top: 0;
+            z-index: 1002; /* Ensures sidebar is above content but below navbar */
         }
+
         .sidebar.active {
             left: 0;
         }
+
         .sidebar a {
-            color: white;
+            color: rgb(255, 255, 255);
             text-decoration: none;
             display: block;
             padding: 10px;
@@ -61,9 +80,11 @@
             align-items: center;
             gap: 10px;
         }
+
         .sidebar a:hover {
-            background: #495057;
+            background: #26282a;
         }
+
         .close-btn {
             position: absolute;
             top: 10px;
@@ -75,12 +96,20 @@
             cursor: pointer;
             font-size: 20px;
         }
-        
+
         @media (max-width: 768px) {
-            .content {
+            .sidebar {
+                width: 100%;
+                left: -100%;
+            }
+            .sidebar.active {
+                left: 0;
+            }
+            .main-content {
                 margin-left: 0;
             }
         }
+    </style>
     </style>
 </head>
 <body>
@@ -91,11 +120,12 @@
     <div class="sidebar" id="sidebar">
         <button class="close-btn" onclick="toggleMenu()"><i class="bi bi-x-lg"></i></button>
         <h4>Dashboard</h4>
-        <a href="#home"><i class="bi bi-house-door"></i> Home</a>
+        <a href="{% url 'worker_dashboard' %}"><i class="bi bi-house-door"></i> Home</a>
         <a href="#profile"><i class="bi bi-person"></i> Profile</a>
         <a href="#notifications"><i class="bi bi-bell"></i> Notifications</a>
         <a href="#workinfo"><i class="bi bi-briefcase"></i> Work Info</a>
-        <a href="#logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
+        <a href="#" data-bs-target="#logoutModal" data-bs-toggle="modal"><i class="bi bi-box-arrow-right"></i> Logout</a>
+    
     </div>
     <script>
         function toggleMenu() {

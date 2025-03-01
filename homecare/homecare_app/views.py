@@ -95,30 +95,32 @@ def worker_list(request, service_id):
 def book_worker(request, worker_id):
     worker = get_object_or_404(Worker, id=worker_id)
 
+    # Get the first associated service (if exists)
+    service = worker.services.first()
+
+    if not service:  # Ensure the worker has a service before proceeding
+        messages.error(request, "This worker has no associated services.")
+        return redirect("worker_list")
+
     if request.method == "POST":
         form = BookingForm(request.POST)
         if form.is_valid():
             booking = form.save(commit=False)
             booking.user = request.user
             booking.worker = worker
-
-            # Assign a service to the booking
-            service = worker.services.first()  # Assuming a worker has at least one service
-            if service:
-                booking.service = service
-            else:
-                messages.error(request, "This worker has no associated services.")
-                return redirect("worker_list", service_id=worker.services.first().id)
-
+            booking.service = service  # Assign the first service
             booking.save()
+
             messages.success(request, "Booking confirmed successfully!")
             return redirect("user_dashboard")  # Redirect after booking
+
     else:
         form = BookingForm()
 
     return render(request, "myapp/book_worker.html", {
         "worker": worker, 
-        "form": form
+        "form": form,
+        "service": service  # Pass the service to the template
     })
    
 @login_required

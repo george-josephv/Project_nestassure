@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fixed Navbar Example</title>
+    <link href="{% static 'myapp/css/styles.css' %}" rel="stylesheet">
+    <style>
+        /* Ensures no content overlaps the navbar */
+        body {
+            padding-top: 60px; /* Adjust this value based on the navbar height */
+        }
+        
+        .navbar {
+            height: 60px; /* Ensure a fixed height for navbar */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fixed Top Navbar -->
+    <nav class="navbar navbar-dark fixed-top bg-dark">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" href="#">
+                <img src="{% static 'myapp/assets/img/navbar-logo.svg' %}" alt="Logo" height="40">
+            </a>
+        </div>
+    </nav>
+
+  
+</body>
+</html>

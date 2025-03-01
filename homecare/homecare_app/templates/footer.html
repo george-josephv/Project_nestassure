@@ -1,0 +1,99 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Care System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet">
+    <link href="{% static 'myapp/css/styles.css' %}" rel="stylesheet">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-content {
+            flex: 1;
+            padding-bottom: 80px; /* Prevents overlap with footer */
+        }
+        .footer {
+            width: 100%;
+            background-color: #343a40;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <!-- Your page content here -->
+    </div>
+
+    <footer class="footer py-5 bg-dark text-light" id="contact">
+        <div class="container">
+            <div class="row text-center text-md-start">
+                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <h5 class="text-uppercase mb-3">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a class="text-light text-decoration-none" href="#">Home</a></li>
+                        <li><a class="text-light text-decoration-none" href="#">About</a></li>
+                        <li><a class="text-light text-decoration-none" href="#">Services</a></li>
+                        <li><a class="text-light text-decoration-none" href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <h5 class="text-uppercase mb-3">Contact Info</h5>
+                    <p><i class="fas fa-phone-alt me-2"></i> +91 9876543210</p>
+                    <p><i class="fas fa-envelope me-2"></i> <a href="mailto:info@example.com" class="text-light text-decoration-none">info@example.com</a></p>
+                    <p><i class="fas fa-map-marker-alt me-2"></i> 123 Main Street, City, Country</p>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <h5 class="text-uppercase mb-3">Follow Us</h5>
+                    <div class="d-flex gap-2">
+                        <a class="btn btn-outline-light rounded-circle" href="https://facebook.com">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a class="btn btn-outline-light rounded-circle" href="https://twitter.com">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a class="btn btn-outline-light rounded-circle" href="https://instagram.com">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a class="btn btn-outline-light rounded-circle" href="https://linkedin.com">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="text-uppercase mb-3">NestAssure</h5>
+                    <form>
+                        <div class="input-group">
+                            <input type="email" class="form-control" placeholder="Your Email" required>
+                            <button class="btn btn-primary" type="submit">Subscribe</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col text-center">
+                    <hr class="border-light">
+                    <p class="mb-0">&copy; 2025 NestAssure Company. All Rights Reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="{% static 'myapp/jscopy/scripts.js' %}"></script>
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+        <script src="{% static 'myapp/js/scripts.js' %}" ></script>
+        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+</body>
+</html>

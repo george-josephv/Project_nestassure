@@ -1,0 +1,169 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Profile</title>  
+    <link rel="stylesheet" href="{% static 'css/worker_profile.css' %}">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .profile-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            transition: 0.3s ease-in-out;
+        }
+
+        .profile-container:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .profile-image img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #3498db;
+        }
+
+        .profile-info h2 {
+            margin: 10px 0;
+            font-size: 26px;
+            font-weight: bold;
+            color: #222;
+        }
+
+        .profile-info h4 {
+            color: #777;
+            margin: 5px 0;
+            font-size: 16px;
+        }
+
+        .profile-details {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .profile-details li {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 8px 0;
+            color: #555;
+            font-size: 15px;
+        }
+
+        .profile-details i {
+            margin-right: 10px;
+            color: #3498db;
+            font-size: 18px;
+        }
+
+        /* Button Container */
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        /* Back Button */
+        .back-button, .booking-button {
+            flex: 1;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            background: #ff4b4b;
+        }
+
+        /* Booking Button */
+        .booking-button {
+            background: #3498db;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .booking-button:hover {
+            background: #217dbb;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .profile-container {
+                max-width: 100%;
+                padding: 20px;
+            }
+
+            .button-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="profile-container">
+    <!-- Profile Image -->
+    <div class="profile-image">
+        <img src="{{ worker.worker_photo.url }}" alt="Profile Picture">
+    </div>
+
+    <!-- Profile Info -->
+    <div class="profile-info">
+        <h2>{{ worker.worker_name }}</h2>
+        <h4>Email: {{ worker.worker_email }}</h4>
+        
+        <ul class="profile-details">
+            <li><i class="fas fa-birthday-cake"></i> DOB: {{ worker.worker_dob }}</li>
+            <li><i class="fas fa-map-marker-alt"></i> Address: {{ worker.worker_address }}</li>
+            <li><i class="fas fa-tint"></i> Blood Group: {{ worker.worker_blood }}</li>
+        </ul>
+    </div>
+
+    <!-- Bottom Buttons -->
+    <div class="button-container">
+        <button class="back-button" onclick="history.back()">← Back</button>
+        <a href="#" class="booking-button">BOOKING</a>
+    </div>
+</div>
+
+</body>
+</html>
+

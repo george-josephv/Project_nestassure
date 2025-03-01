@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workers for {{ service.service_name }}</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> <!-- FontAwesome Icons -->
+    
+    <style>
+        /* Page Styling */
+        body {
+            background-color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        /* Title Styling */
+        h2 {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* Worker List */
+        .worker-list-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Worker Card */
+        .worker-card {
+            display: flex;
+            align-items: center;
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin: 10px;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out;
+            border: 1px solid #ddd;
+        }
+
+        .worker-card:hover {
+            transform: scale(1.05);
+        }
+
+        /* Worker Image */
+        .worker-card img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+            border: 3px solid #FFD700;
+        }
+
+        /* Worker Info */
+        .worker-info {
+            flex-grow: 1;
+        }
+
+        .worker-info span {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            display: block;
+        }
+
+        .worker-info small {
+            font-size: 14px;
+            color: #666;
+            display: flex;
+            align-items: center;
+        }
+
+        .worker-info small i {
+            color: #FFD700;
+            margin-right: 8px;
+        }
+
+        /* Back Button */
+        .back-button {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .back-button .btn {
+            background-color: #FFD700;
+            color: black;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 18px;
+            border: none;
+            transition: background 0.3s;
+            text-decoration: none;
+        }
+
+        .back-button .btn:hover {
+            background-color: #E0C200;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .worker-card {
+                width: 100%;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .worker-card img {
+                width: 70px;
+                height: 70px;
+                margin-bottom: 10px;
+            }
+
+            .worker-info span, .worker-info small {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Include Navbar -->
+    {% include 'logospace.html' %}
+
+    <div class="container">
+        <h2>Workers for {{ service.service_name }}</h2>
+
+        <!-- Worker List -->
+        <div class="row worker-list-container">
+            {% for worker in workers %}
+                <div class="col-md-6">
+                    <div class="worker-card">
+                        <!-- Worker Image -->
+                        {% if worker.user.profile_picture %}
+                            <img src="{{ worker.user.profile_picture.url }}" alt="{{ worker.user.username }}">
+                        {% else %}
+                            <img src="{% static 'myapp/images/default_worker.jpg' %}" alt="Default Worker">
+                        {% endif %}
+
+                        <!-- Worker Info -->
+                        <div class="worker-info">
+                            <span>{{ worker.user.username|upper}}</span> 
+                            <small><i class="fas fa-map-marker-alt"></i>District: {{ worker.user.district }}</small>
+                            <small><i class="fas fa-home"></i>Place: {{ worker.user.place }}</small>
+                            <small><i class="fas fa-envelope"></i>Email: {{ worker.user.email }}</small>
+                        </div>
+                        <!-- Booking Button -->
+                        <a href="#" class="btn book-btn">Book Now</a>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-center">No workers available for this service.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Back to Services Button -->
+        <div class="back-button">
+            <a href="{% url 'servicelist' %}" class="btn">Back to Services</a>
+        </div>
+    </div>
+
+</body>
+</html>

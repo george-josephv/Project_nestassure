@@ -15,6 +15,12 @@ urlpatterns = [
     path('my_bookings/', views.my_bookings, name='my_bookings'),
     path('profile/', views.user_my_profile, name='user_my_profile'),
     path('profile/edit/', views.edit_user_profile, name='edit_user_profile'),
+    
+    # worker
+    path('worker/bookings/',views. worker_booking_list_view, name='worker_bookings'),
+    path('worker/bookings/update/<int:booking_id>/<str:status>/', views.update_booking_status, name='update_booking_status'),
+    path('worker/accepted-bookings/',views. worker_accepted_bookings, name='worker_accepted_bookings'),
+    path("payment/<int:booking_id>/",views.payment_form, name="payment_form")
+    
 
 ]
-

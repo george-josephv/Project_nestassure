@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Bookings</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .booking-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        .booking-card:last-child {
+            border-bottom: none;
+        }
+        .user-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+        .details {
+            text-align: left;
+            flex-grow: 1;
+        }
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+        .btn-accept {
+            background: green;
+            color: white;
+        }
+        .btn-reject {
+            background: red;
+            color: white;
+        }
+        .btn-status {
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 14px;
+            color: white;
+            font-weight: bold;
+            cursor: default;
+            border: none;
+        }
+        .accepted {
+            background: green;
+        }
+        .rejected {
+            background: red;
+        }
+        .pending {
+            background: orange;
+        }
+        .btn-back {
+            display: inline-block;
+            padding: 10px 20px;
+            background:rgb(190, 156, 18);
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .btn-back:hover {
+            background:rgb(77, 214, 79);
+        }
+        /* Confirmation Box Styling */
+        .confirmation-box {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            z-index: 1000;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+    </style>
+    <script>
+        let selectedBookingId = null;
+        let selectedStatus = null;
+
+        function showConfirmation(bookingId, status) {
+            selectedBookingId = bookingId;
+            selectedStatus = status;
+            document.getElementById("confirmation-message").innerText = `You ${status} this work?`;
+            document.getElementById("confirmation-box").style.display = "block";
+            document.getElementById("overlay").style.display = "block";
+        }
+
+        function hideConfirmation() {
+            document.getElementById("confirmation-box").style.display = "none";
+            document.getElementById("overlay").style.display = "none";
+        }
+
+        function updateStatus() {
+            if (selectedBookingId && selectedStatus) {
+                fetch(`/worker/bookings/update/${selectedBookingId}/${selectedStatus}/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById(`buttons-${selectedBookingId}`).style.display = "none";
+                        let statusButton = document.createElement("button");
+                        statusButton.innerText = data.status;
+                        statusButton.classList.add("btn-status", data.status);
+                        document.getElementById(`status-container-${selectedBookingId}`).innerHTML = "";
+                        document.getElementById(`status-container-${selectedBookingId}`).appendChild(statusButton);
+                    } else {
+                        alert("Error updating status: " + data.error);
+                    }
+                })
+                .catch(error => console.error('Error:', error))
+                .finally(() => {
+                    hideConfirmation();
+                });
+            }
+        }
+    </script>
+</head>
+<body>
+
+<!-- Overlay Background -->
+<div id="overlay" class="overlay" onclick="hideConfirmation()"></div>
+
+<!-- Confirmation Box -->
+<div id="confirmation-box" class="confirmation-box">
+    <p id="confirmation-message"></p>
+    <button class="btn btn-accept" onclick="updateStatus()">Confirm</button>
+    <button class="btn btn-reject" onclick="hideConfirmation()">Cancel</button>
+</div>
+
+<!-- Back Button (Top) -->
+<a href="javascript:history.back()" class="btn-back"><i class="fa fa-arrow-left"></i> Back</a>
+
+<div class="container">
+    <h2>My Bookings</h2>
+
+    {% for booking in bookings %}
+        <div class="booking-card">
+            <img src="{{ booking.user.profile_picture.url }}" alt="User Image" class="user-image">
+            <div class="details">
+                <p><strong>Name:</strong> {{ booking.user.username }}</p>
+                <p><strong>Service:</strong> {{ booking.service.service_name }}</p>
+                <p><strong>Expected Date:</strong> {{ booking.expected_date }}</p>
+                <p><strong>Address:</strong> {{ booking.user.state }}, {{ booking.user.district }}, {{ booking.user.place }}, {{ booking.user.housename }}</p>
+                <p><strong>Email:</strong> {{ booking.user.email }}</p>
+                <div id="status-container-{{ booking.id }}">
+                    <button class="btn-status {{ booking.status }}">{{ booking.status }}</button>
+                </div>
+            </div>
+            {% if booking.status == "pending" %}
+                <div id="buttons-{{ booking.id }}">
+                    <button class="btn btn-accept" onclick="showConfirmation({{ booking.id }}, 'accepted')">Accept</button>
+                    <button class="btn btn-reject" onclick="showConfirmation({{ booking.id }}, 'rejected')">Reject</button>
+                </div>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>No bookings found.</p>
+    {% endfor %}
+</div>
+
+<!-- Back Button (Bottom) -->
+<a href="javascript:history.back()" class="btn-back"><i class="fa fa-arrow-left"></i> Back</a>
+
+</body>
+</html>

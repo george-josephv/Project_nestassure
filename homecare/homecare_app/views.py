@@ -125,7 +125,7 @@ def book_worker(request, worker_id):
         "form": form,
         "service": service  # Pass the service to the template
     })
-   
+#my booking view and status
 @login_required
 def my_bookings(request):
     bookings = Booking.objects.filter(user=request.user)  # Get only logged-in user's bookings
@@ -135,13 +135,18 @@ def my_bookings(request):
         status = request.POST.get("status")  # "completed" or "pending"
         
         booking = get_object_or_404(Booking, id=booking_id, user=request.user)
-        booking.status = status
-        booking.save()
-        
-        messages.success(request, "Booking status updated successfully!")
+
+        if booking.status == "accepted" and status == "completed":
+            booking.status = "completed"
+            booking.save()
+            messages.success(request, "Booking marked as Completed!")
+        else:
+            messages.error(request, "Only Accepted bookings can be completed.")
+
         return redirect("my_bookings")  # Refresh page after submission
 
     return render(request, "myapp/my_bookings.html", {"bookings": bookings})
+
 
 @login_required
 def user_my_profile(request):
@@ -202,7 +207,6 @@ def worker_accepted_bookings(request):
 
 # Payment form
 @login_required
-
 def payment_form(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id)
 
@@ -217,10 +221,11 @@ def payment_form(request, booking_id):
         payment, created = Payment.objects.get_or_create(booking=booking)
         payment.total_hours = total_hours
         payment.total_amount = total_amount
-        payment.is_paid = True  # Mark as paid if needed
+        payment.is_paid = True  # Mark as paid
         payment.save()
 
-        return redirect("payment_success")  # Redirect to success page
+        # Redirect to worker dashboard
+        return redirect("worker_dashboard")
 
     context = {
         "booking": booking,
@@ -229,3 +234,18 @@ def payment_form(request, booking_id):
         "minutes_range": range(0, 60, 5),
     }
     return render(request, "myapp/payment_form.html", context)
+
+def add_payment(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id)
+    if request.method == "POST":
+        form = payment_form(request.POST)
+        if form.is_valid():
+            payment = form.save(commit=False)
+            payment.booking = booking
+            payment.total_amount = payment.total_hours * booking.service.rate_per_hour
+            payment.save()
+            return redirect('payment_success')  # Redirect after saving
+    else:
+        form = payment_form()
+    
+    return render(request, 'payment_form.html', {'form': form, 'booking': booking})

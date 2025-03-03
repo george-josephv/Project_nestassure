@@ -35,6 +35,18 @@
             margin-bottom: 30px;
         }
 
+        .filter-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .filter-container select {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
         .worker-list-container {
             display: flex;
             justify-content: center;
@@ -124,6 +136,16 @@
             }
         }
     </style>
+
+    <script>
+        function filterWorkers() {
+            var selectedService = document.getElementById("serviceFilter").value;
+            if (selectedService) {
+                window.location.href = "/worker-list/" + selectedService + "/";
+            }
+        }
+    </script>
+
 </head>
 <body>
 
@@ -132,6 +154,17 @@
 
         <div class="container">
             <h2>Workers for {{ service.service_name }}</h2>
+
+            <div class="filter-container">
+                <label for="serviceFilter">Select Service:</label>
+                <select id="serviceFilter" onchange="filterWorkers()">
+                    {% for s in all_services %}
+                        <option value="{{ s.id }}" {% if s.id == service.id %}selected{% endif %}>
+                            {{ s.service_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
 
             <div class="row worker-list-container">
                 {% for worker in workers %}

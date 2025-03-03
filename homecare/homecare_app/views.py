@@ -1,19 +1,15 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import BookingForm, EditProfileForm
 from .models import User, Service, Worker, Booking, Payment
-from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from datetime import date
 from django.http import JsonResponse
 from decimal import Decimal
 
-
 def landing_page(request):
-    return render(request, 'myapp/landingpage.html')  # No need to specify 'myapp/' in the template path
-
-
+    return render(request, 'myapp/landingpage.html')
 
 def login_view(request):
     if request.method == "POST":
@@ -24,17 +20,18 @@ def login_view(request):
         if user is not None:
             login(request, user)
             if user.role == "worker":
-                return redirect("worker_dashboard")  # Redirect workers
+                return redirect("worker_dashboard")
             else:
-                return redirect("user_dashboard")  # Redirect users
+                return redirect("user_dashboard")
         else:
             messages.error(request, "Invalid username or password")
 
-    return render(request, "myapp/login.html")  # Render login page if not authenticated
+    return render(request, "myapp/login.html")
 
 @login_required
 def user_dashboard(request):
     return render(request, 'myapp/user_dashboard.html')
+
 def user_logout(request):
     logout(request)
     return render(request, 'myapp/landingpage.html')
@@ -42,18 +39,18 @@ def user_logout(request):
 @login_required
 def worker_dashboard(request):
     return render(request, 'myapp/workerdashome.html')
+
 def worker_logout(request):
     logout(request)
     return render(request, 'myapp/landingpage.html')
 
-#sign upp
 def signup_view(request):
     if request.method == "POST":
         username = request.POST.get("username")
         email = request.POST.get("email")
         password = request.POST.get("password")
         confirm_password = request.POST.get("confirm-password")
-        role = request.POST.get("role")  # Get user role (worker or normal user)
+        role = request.POST.get("role")
 
         if password != confirm_password:
             messages.error(request, "Passwords do not match.")
@@ -67,11 +64,9 @@ def signup_view(request):
             messages.error(request, "Email already registered.")
             return redirect("signup")
 
-        # Create and save the user
         user = User.objects.create_user(username=username, email=email, password=password, role=role)
-        login(request, user)  # Log in the user after signup
+        login(request, user)
 
-        # Redirect based on role
         if user.role == "worker":
             return redirect("login")
         else:
@@ -79,29 +74,31 @@ def signup_view(request):
 
     return render(request, "myapp/signup.html")
 
-
-
-# servicelist
 def servicelist(request):
-    """View to display all available services."""
     services = Service.objects.all()
     return render(request, 'myapp/servicelist.html', {'services': services})
 
-# workers_list
-def worker_list(request, service_id):
-    service = get_object_or_404(Service, id=service_id)
-    workers = Worker.objects.filter(services__id=service_id)  # Corrected query
-    return render(request, 'myapp/worker_list.html', {'service': service, 'workers': workers})
+def worker_list(request,service_id):
+    service_id = request.GET.get("service_id")
+    services = Service.objects.all()
 
+    if service_id:
+        workers = Worker.objects.filter(services__id=service_id)
+    else:
+        workers = Worker.objects.all()
+
+    return render(request, 'myapp/worker_list.html', {
+        'services': services,
+        'workers': workers,
+        'selected_service_id': service_id
+    })
 
 @login_required
 def book_worker(request, worker_id):
     worker = get_object_or_404(Worker, id=worker_id)
-
-    # Get the first associated service (if exists)
     service = worker.services.first()
 
-    if not service:  # Ensure the worker has a service before proceeding
+    if not service:
         messages.error(request, "This worker has no associated services.")
         return redirect("worker_list")
 
@@ -111,11 +108,10 @@ def book_worker(request, worker_id):
             booking = form.save(commit=False)
             booking.user = request.user
             booking.worker = worker
-            booking.service = service  # Assign the first service
+            booking.service = service
             booking.save()
-
             messages.success(request, "Booking confirmed successfully!")
-            return redirect("user_dashboard")  # Redirect after booking
+            return redirect("user_dashboard")
 
     else:
         form = BookingForm()
@@ -123,17 +119,17 @@ def book_worker(request, worker_id):
     return render(request, "myapp/book_worker.html", {
         "worker": worker, 
         "form": form,
-        "service": service  # Pass the service to the template
+        "service": service  
     })
-#my booking view and status
+
 @login_required
 def my_bookings(request):
-    bookings = Booking.objects.filter(user=request.user)  # Get only logged-in user's bookings
+    bookings = Booking.objects.filter(user=request.user)
 
     if request.method == "POST":
         booking_id = request.POST.get("booking_id")
-        status = request.POST.get("status")  # "completed" or "pending"
-        
+        status = request.POST.get("status")
+
         booking = get_object_or_404(Booking, id=booking_id, user=request.user)
 
         if booking.status == "accepted" and status == "completed":
@@ -143,10 +139,9 @@ def my_bookings(request):
         else:
             messages.error(request, "Only Accepted bookings can be completed.")
 
-        return redirect("my_bookings")  # Refresh page after submission
+        return redirect("my_bookings")
 
     return render(request, "myapp/my_bookings.html", {"bookings": bookings})
-
 
 @login_required
 def user_my_profile(request):
@@ -158,21 +153,17 @@ def edit_user_profile(request):
         form = EditProfileForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect('user_my_profile')  # Redirect to profile page after saving
+            return redirect('user_my_profile')
     else:
         form = EditProfileForm(instance=request.user)
 
     return render(request, 'myapp/edit_user_profile.html', {'form': form})
-
-# worker pages
-
 
 @login_required
 def worker_booking_list_view(request):
     worker = get_object_or_404(Worker, user=request.user)
     bookings = Booking.objects.filter(worker=worker).order_by('-id')
 
-    # Get a list of expected dates for accepted bookings
     accepted_dates = list(Booking.objects.filter(worker=worker, status="accepted").values_list("expected_date", flat=True))
 
     context = {
@@ -197,15 +188,13 @@ def update_booking_status(request, booking_id, status):
     
     return JsonResponse({"success": False, "error": "Invalid request"})
 
-
 @login_required
 def worker_accepted_bookings(request):
-    worker = request.user.worker_profile  # Get the logged-in worker
+    worker = request.user.worker_profile
     accepted_bookings = Booking.objects.filter(worker=worker, status__in=['accepted', 'completed'])
 
     return render(request, 'myapp/worker_accepted_bookings.html', {'accepted_bookings': accepted_bookings})
 
-# Payment form
 @login_required
 def payment_form(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id)
@@ -214,17 +203,15 @@ def payment_form(request, booking_id):
         hours = int(request.POST.get("hours", 0))
         minutes = int(request.POST.get("minutes", 0))
 
-        total_hours = Decimal(hours) + (Decimal(minutes) / Decimal(60))  # Convert to Decimal
-        total_amount = total_hours * booking.service.rate_per_hour  # Now both are Decimal
+        total_hours = Decimal(hours) + (Decimal(minutes) / Decimal(60))
+        total_amount = total_hours * booking.service.rate_per_hour
 
-        # Save payment details
         payment, created = Payment.objects.get_or_create(booking=booking)
         payment.total_hours = total_hours
         payment.total_amount = total_amount
-        payment.is_paid = True  # Mark as paid
+        payment.is_paid = True
         payment.save()
 
-        # Redirect to worker dashboard
         return redirect("worker_dashboard")
 
     context = {
@@ -244,7 +231,7 @@ def add_payment(request, booking_id):
             payment.booking = booking
             payment.total_amount = payment.total_hours * booking.service.rate_per_hour
             payment.save()
-            return redirect('payment_success')  # Redirect after saving
+            return redirect('payment_success')
     else:
         form = payment_form()
     

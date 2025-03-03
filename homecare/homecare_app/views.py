@@ -2,10 +2,13 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import BookingForm, EditProfileForm
-from .models import User, Service, Worker, Booking
+from .models import User, Service, Worker, Booking, Payment
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from datetime import date
+from django.http import JsonResponse
+from decimal import Decimal
+
 
 def landing_page(request):
     return render(request, 'myapp/landingpage.html')  # No need to specify 'myapp/' in the template path
@@ -155,3 +158,74 @@ def edit_user_profile(request):
         form = EditProfileForm(instance=request.user)
 
     return render(request, 'myapp/edit_user_profile.html', {'form': form})
+
+# worker pages
+
+
+@login_required
+def worker_booking_list_view(request):
+    worker = get_object_or_404(Worker, user=request.user)
+    bookings = Booking.objects.filter(worker=worker).order_by('-id')
+
+    # Get a list of expected dates for accepted bookings
+    accepted_dates = list(Booking.objects.filter(worker=worker, status="accepted").values_list("expected_date", flat=True))
+
+    context = {
+        'bookings': bookings,
+        'accepted_dates': accepted_dates
+    }
+    return render(request, 'myapp/worker_booking_list_view.html', context)
+
+@login_required
+def update_booking_status(request, booking_id, status):
+    if request.method == "POST":
+        try:
+            booking = Booking.objects.get(id=booking_id, worker__user=request.user)
+            if status in ["accepted", "rejected"]:
+                booking.status = status
+                booking.save()
+                return JsonResponse({"success": True, "status": booking.status})
+            else:
+                return JsonResponse({"success": False, "error": "Invalid status"})
+        except Booking.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Booking not found"})
+    
+    return JsonResponse({"success": False, "error": "Invalid request"})
+
+
+@login_required
+def worker_accepted_bookings(request):
+    worker = request.user.worker_profile  # Get the logged-in worker
+    accepted_bookings = Booking.objects.filter(worker=worker, status__in=['accepted', 'completed'])
+
+    return render(request, 'myapp/worker_accepted_bookings.html', {'accepted_bookings': accepted_bookings})
+
+# Payment form
+@login_required
+
+def payment_form(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id)
+
+    if request.method == "POST":
+        hours = int(request.POST.get("hours", 0))
+        minutes = int(request.POST.get("minutes", 0))
+
+        total_hours = Decimal(hours) + (Decimal(minutes) / Decimal(60))  # Convert to Decimal
+        total_amount = total_hours * booking.service.rate_per_hour  # Now both are Decimal
+
+        # Save payment details
+        payment, created = Payment.objects.get_or_create(booking=booking)
+        payment.total_hours = total_hours
+        payment.total_amount = total_amount
+        payment.is_paid = True  # Mark as paid if needed
+        payment.save()
+
+        return redirect("payment_success")  # Redirect to success page
+
+    context = {
+        "booking": booking,
+        "rate_per_hour": booking.service.rate_per_hour,
+        "hours_range": range(0, 24),
+        "minutes_range": range(0, 60, 5),
+    }
+    return render(request, "myapp/payment_form.html", context)

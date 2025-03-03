@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accepted Bookings</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .booking-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        .booking-card:last-child {
+            border-bottom: none;
+        }
+        .user-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+        .details {
+            text-align: left;
+            flex-grow: 1;
+        }
+        .btn-status {
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 14px;
+            color: white;
+            font-weight: bold;
+            border: none;
+        }
+        .accepted {
+            background: green;
+        }
+        .completed {
+            background: blue;
+        }
+        .btn-next {
+            padding: 8px 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-next:hover {
+            background: #0056b3;
+        }
+        .btn-back {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .btn-back:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+
+<div class="container">
+    <h2>Accepted Bookings</h2>
+
+    {% for booking in accepted_bookings %}
+        <div class="booking-card">
+            <img src="{{ booking.user.profile_picture.url }}" alt="User Image" class="user-image">
+            <div class="details">
+                <p><strong>Name:</strong> {{ booking.user.username }}</p>
+                <p><strong>Service:</strong> {{ booking.service.service_name }}</p>
+                <p><strong>Expected Date:</strong> {{ booking.expected_date }}</p>
+                <p><strong>Address:</strong> {{ booking.user.state }}, {{ booking.user.district }}, {{ booking.user.place }}, {{ booking.user.housename }}</p>
+                <p><strong>Email:</strong> {{ booking.user.email }}</p>
+                <p><strong>Status:</strong> 
+                    <button class="btn-status {% if booking.status == 'completed' %}completed{% else %}accepted{% endif %}">
+                        {{ booking.status }}
+                    </button>
+                </p>
+                
+                <!-- Show Next Button Only If Status is Completed -->
+                {% if booking.status|lower == "completed" %}
+                <a href="{% url 'payment_form' booking.id %}" class="btn-next">Next</a>
+                {% endif %}
+            </div>
+        </div>
+    {% empty %}
+        <p>No accepted bookings found.</p>
+    {% endfor %}
+</div>
+
+<!-- Back Button -->
+<a href="javascript:history.back()" class="btn-back"><i class="fa fa-arrow-left"></i> Back</a>
+
+</body>
+</html>

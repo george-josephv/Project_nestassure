@@ -1,0 +1,119 @@
+{% comment %} payment form {% endcomment %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Form</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .btn-submit {
+            padding: 10px 20px;
+            background: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-submit:hover {
+            background: darkgreen;
+        }
+    </style>
+    <script>
+        function calculateTotal() {
+            let hours = parseInt(document.getElementById("hours").value) || 0;
+            let minutes = parseInt(document.getElementById("minutes").value) || 0;
+
+            let totalHours = hours + (minutes / 60);
+            let ratePerHour = {{ rate_per_hour }};
+            let totalAmount = totalHours * ratePerHour;
+
+            document.getElementById("total_amount").value = totalAmount.toFixed(2);
+        }
+    </script>
+</head>
+<body>
+
+<div class="container">
+    <h2>Payment Details</h2>
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label>Name:</label>
+            <input type="text" value="{{ booking.user.username }}" disabled>
+        </div>
+        <div class="form-group">
+            <label>Address:</label>
+            <input type="text" value="{{ booking.user.state }}, {{ booking.user.district }}, {{ booking.user.place }}, {{ booking.user.housename }}" disabled>
+        </div>
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="text" value="{{ booking.user.email }}" disabled>
+        </div>
+        <div class="form-group">
+            <label>Service:</label>
+            <input type="text" value="{{ booking.service.service_name }}" disabled>
+        </div>
+        <div class="form-group">
+            <label>Rate Per Hour:</label>
+            <input type="text" value="{{ rate_per_hour }}" disabled>
+        </div>
+
+        <div class="form-group">
+            <label>Hours:</label>
+            <select id="hours" name="hours" onchange="calculateTotal()">
+                {% for i in hours_range %}
+                <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Minutes:</label>
+            <select id="minutes" name="minutes" onchange="calculateTotal()">
+                {% for i in minutes_range %}
+                <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Total Amount:</label>
+            <input type="text" id="total_amount" name="total_amount" readonly>
+        </div>
+
+        <button type="submit" class="btn-submit">Submit Payment</button>
+    </form>
+</div>
+
+</body>
+</html>

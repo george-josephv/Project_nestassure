@@ -81,6 +81,12 @@
                 max-width: 90%;
             }
         }
+
+
+        .back-btn:hover {
+            color: rgba(251, 230, 32, 0.758);
+        }
+
     </style>
 </head>
 <body>
@@ -92,6 +98,8 @@
         <!-- Full-Page Login Section -->
         <section class="login-section">
             <div class="login-box">
+                <a href="{% url 'landing' %}" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
+
                 <h3 class="text-center">Login</h3>
 
                 <!-- Error Messages -->

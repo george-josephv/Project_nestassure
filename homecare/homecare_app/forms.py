@@ -30,6 +30,11 @@ DISTRICT_CHOICES = [
 
 ]
 
+STATE_CHOICES =[
+    ("Kerala","Kerala")
+
+
+]
 
 class BookingForm(forms.ModelForm):
     expected_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
@@ -47,7 +52,11 @@ class EditProfileForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-control'})
 
     )
+    state = forms.ChoiceField(
+        choices=STATE_CHOICES, 
+        widget=forms.Select(attrs={'class': 'form-control'})
 
+    )
     class Meta:
         model = User
         fields = ['username', 'email', 'phone_number', 'dob', 'state', 'district', 'place', 'housename', 'profile_picture','blood_group']

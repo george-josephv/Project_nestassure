@@ -63,15 +63,12 @@ class EditProfileForm(forms.ModelForm):
         widgets = {
             'dob': forms.DateInput(attrs={'type': 'date'}),
         }
-# worker -many to many
+class WorkerForm(forms.ModelForm):
+    services = forms.ModelMultipleChoiceField(
+        queryset=Service.objects.all(),
+        widget=forms.CheckboxSelectMultiple  # Allows selecting multiple services
+    )
 
-# class WorkerForm(forms.ModelForm):
-#     services = forms.ModelMultipleChoiceField(
-#         queryset=Service.objects.all(),
-#         widget=forms.CheckboxSelectMultiple,  # Allows multiple selections
-#         required=True
-#     )
-
-#     class Meta:
-#         model = Worker
-#         fields = ['services']
+    class Meta:
+        model = Worker
+        fields = ['services']

@@ -20,7 +20,9 @@ urlpatterns = [
     path('worker/bookings/',views. worker_booking_list_view, name='worker_bookings'),
     path('worker/bookings/update/<int:booking_id>/<str:status>/', views.update_booking_status, name='update_booking_status'),
     path('worker/accepted-bookings/',views. worker_accepted_bookings, name='worker_accepted_bookings'),
-    # path("payment/<int:booking_id>/",views.payment_form, name="payment_form")
-    
-
+    path('worker/payment/<int:booking_id>/',views. worker_payment_form, name='worker_payment_form'),
+    # path('payment/details/<int:booking_id>/', views.user_payment_details, name='user_payment_details'),
+ 
+    # path('payment-success/<int:booking_id>/', views.user_payment_success, name='user_payment_success'),
 ]
+

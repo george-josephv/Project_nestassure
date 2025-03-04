@@ -193,46 +193,83 @@ def worker_accepted_bookings(request):
     worker = request.user.worker_profile
     accepted_bookings = Booking.objects.filter(worker=worker, status__in=['accepted', 'completed'])
 
-    return render(request, 'myapp/worker_accepted_bookings.html', {'accepted_bookings': accepted_bookings})
+    # Get paid bookings from session
+    paid_bookings = request.session.get("paid_bookings", [])
+
+    return render(request, 'myapp/worker_accepted_bookings.html', {
+        'accepted_bookings': accepted_bookings,
+        'paid_bookings': paid_bookings
+    })
 
 @login_required
-def payment_form(request, booking_id):
+def worker_payment_form(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id)
 
     if request.method == "POST":
-        hours = int(request.POST.get("hours", 0))
-        minutes = int(request.POST.get("minutes", 0))
+        total_hours = int(request.POST.get("hours", 0))
+        total_minutes = int(request.POST.get("minutes", 0))
 
-        total_hours = Decimal(hours) + (Decimal(minutes) / Decimal(60))
-        total_amount = total_hours * booking.service.rate_per_hour
+        # Convert total time into decimal hours
+        total_time_in_hours = Decimal(total_hours) + (Decimal(total_minutes) / Decimal(60))
 
+        # Convert rate_per_hour to Decimal
+        rate_per_hour = Decimal(booking.service.rate_per_hour)
+
+        # Calculate total amount before deduction
+        total_amount = total_time_in_hours * rate_per_hour
+
+        # Deduct 15% (worker's commission fee)
+        final_amount = total_amount - (total_amount * Decimal(0.15))
+
+        # Save payment details in the database
         payment, created = Payment.objects.get_or_create(booking=booking)
         payment.total_hours = total_hours
-        payment.total_amount = total_amount
-        payment.is_paid = True
+        payment.total_minutes = total_minutes
+        payment.total_amount = final_amount
         payment.save()
 
-        return redirect("worker_dashboard")
+        # 🔹 Store booking ID in session
+        if "paid_bookings" not in request.session:
+            request.session["paid_bookings"] = []
+        
+        request.session["paid_bookings"].append(booking_id)
+        request.session.modified = True  # Ensure session updates
+
+        messages.success(request, f"Payment recorded! Final amount after 15% deduction: ₹{final_amount:.2f}")
+        return redirect("worker_accepted_bookings")
 
     context = {
         "booking": booking,
         "rate_per_hour": booking.service.rate_per_hour,
-        "hours_range": range(0, 24),
-        "minutes_range": range(0, 60, 5),
+        "hours_range": range(0, 13),
+        "minutes_range": [0, 15, 30, 45],
     }
-    return render(request, "myapp/payment_form.html", context)
+    return render(request, "myapp/worker_payment_form.html", context)
+# @login_required
 
-def add_payment(request, booking_id):
-    booking = get_object_or_404(Booking, id=booking_id)
-    if request.method == "POST":
-        form = payment_form(request.POST)
-        if form.is_valid():
-            payment = form.save(commit=False)
-            payment.booking = booking
-            payment.total_amount = payment.total_hours * booking.service.rate_per_hour
-            payment.save()
-            return redirect('payment_success')
-    else:
-        form = payment_form()
+# def user_payment_details(request, booking_id):
+
+#     # Display the payment details for a specific booking.
     
-    return render(request, 'payment_form.html', {'form': form, 'booking': booking})
+#     booking = get_object_or_404(Booking, id=booking_id)
+#     payment = get_object_or_404(Payment, booking=booking)
+
+#     context = {
+#         'booking': booking,
+#         'payment': payment
+#     }
+#     return render(request, 'myapp/user_payment_details.html', context)
+
+
+# def user_payment_success(request, booking_id):
+#     """
+#     Mark the payment as done and redirect to a success page.
+#     """
+#     booking = get_object_or_404(Booking, id=booking_id)
+#     payment = get_object_or_404(Payment, booking=booking)
+
+#     # Update payment status
+#     payment.is_paid = True
+#     payment.save()
+
+#     return render(request, 'myapp/user_payment_success.html', {'booking': booking})

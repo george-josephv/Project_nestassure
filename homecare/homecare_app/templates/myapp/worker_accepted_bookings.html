@@ -82,42 +82,59 @@
         .btn-back:hover {
             background: #0056b3;
         }
+        .btn-processing {
+            padding: 8px 15px;
+            background: #ffa500; /* Orange */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: not-allowed;
+            margin-top: 10px;
+            float: right; /* Aligns to the right */
+        }
+        
+  
+        
     </style>
 </head>
 <body>
 
-
-<div class="container">
-    <h2>Accepted Bookings</h2>
-
-    {% for booking in accepted_bookings %}
-        <div class="booking-card">
-            <img src="{{ booking.user.profile_picture.url }}" alt="User Image" class="user-image">
-            <div class="details">
-                <p><strong>Name:</strong> {{ booking.user.username }}</p>
-                <p><strong>Service:</strong> {{ booking.service.service_name }}</p>
-                <p><strong>Expected Date:</strong> {{ booking.expected_date }}</p>
-                <p><strong>Address:</strong> {{ booking.user.state }}, {{ booking.user.district }}, {{ booking.user.place }}, {{ booking.user.housename }}</p>
-                <p><strong>Email:</strong> {{ booking.user.email }}</p>
-                <p><strong>Status:</strong> 
-                    <button class="btn-status {% if booking.status == 'completed' %}completed{% else %}accepted{% endif %}">
-                        {{ booking.status }}
-                    </button>
-                </p>
-                
-                <!-- Show Next Button Only If Status is Completed -->
-                {% if booking.status|lower == "completed" %}
-                <a href="{% url 'payment_form' booking.id %}" class="btn-next">Next</a>
-                {% endif %}
+    <div class="container">
+        <h2>Accepted Bookings</h2>
+    
+        {% for booking in accepted_bookings %}
+            <div class="booking-card">
+                <img src="{{ booking.user.profile_picture.url }}" alt="User Image" class="user-image">
+                <div class="details">
+                    <p><strong>Booking ID:</strong> {{ booking.booking_id }}</p>  <!-- Added Booking ID -->
+                    <p><strong>Name:</strong> {{ booking.user.username }}</p>
+                    <p><strong>Service:</strong> {{ booking.service.service_name }}</p>
+                    <p><strong>Expected Date:</strong> {{ booking.expected_date }}</p>
+                    <p><strong>Address:</strong> {{ booking.user.state }}, {{ booking.user.district }}, {{ booking.user.place }}, {{ booking.user.housename }}</p>
+                    <p><strong>Email:</strong> {{ booking.user.email }}</p>
+                    <p><strong>Status:</strong> 
+                        <button class="btn-status {% if booking.status == 'completed' %}completed{% else %}accepted{% endif %}">
+                            {{ booking.status }}
+                        </button>
+                    </p>
+                    
+                    <!-- Show Next Button Only If Status is Completed -->
+                    {% if booking.status|lower == "completed" %}
+                        {% if booking.payment %}  
+                            <button class="btn-processing" style="float: right;">Payment Processing</button>
+                        {% else %}
+                            <a href="{% url 'worker_payment_form' booking.id %}" class="btn-next" style="float: right;">Next</a>
+                        {% endif %}
+                    {% endif %}
+                </div>
             </div>
-        </div>
-    {% empty %}
-        <p>No accepted bookings found.</p>
-    {% endfor %}
-</div>
-
-<!-- Back Button -->
-<a href="javascript:history.back()" class="btn-back"><i class="fa fa-arrow-left"></i> Back</a>
-
-</body>
-</html>
+        {% empty %}
+            <p>No accepted bookings found.</p>
+        {% endfor %}
+    </div>
+    
+    <!-- Back Button -->
+    <a href="javascript:history.back()" class="btn-back"><i class="fa fa-arrow-left"></i> Back</a>
+    

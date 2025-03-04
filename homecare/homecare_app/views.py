@@ -67,10 +67,7 @@ def signup_view(request):
         user = User.objects.create_user(username=username, email=email, password=password, role=role)
         login(request, user)
 
-        if user.role == "worker":
-            return redirect("login")
-        else:
-            return redirect("login")
+        return redirect("login")
 
     return render(request, "myapp/signup.html")
 
@@ -78,19 +75,15 @@ def servicelist(request):
     services = Service.objects.all()
     return render(request, 'myapp/servicelist.html', {'services': services})
 
-def worker_list(request,service_id):
-    service_id = request.GET.get("service_id")
+def worker_list(request, service_id):
     services = Service.objects.all()
-
-    if service_id:
-        workers = Worker.objects.filter(services__id=service_id)
-    else:
-        workers = Worker.objects.all()
+    selected_service = get_object_or_404(Service, id=service_id) if service_id else None
+    workers = Worker.objects.filter(services__id=service_id) if service_id else Worker.objects.all()
 
     return render(request, 'myapp/worker_list.html', {
         'services': services,
         'workers': workers,
-        'selected_service_id': service_id
+        'selected_service': selected_service
     })
 
 @login_required
@@ -166,11 +159,10 @@ def worker_booking_list_view(request):
 
     accepted_dates = list(Booking.objects.filter(worker=worker, status="accepted").values_list("expected_date", flat=True))
 
-    context = {
+    return render(request, 'myapp/worker_booking_list_view.html', {
         'bookings': bookings,
         'accepted_dates': accepted_dates
-    }
-    return render(request, 'myapp/worker_booking_list_view.html', context)
+    })
 
 @login_required
 def update_booking_status(request, booking_id, status):
@@ -214,13 +206,12 @@ def payment_form(request, booking_id):
 
         return redirect("worker_dashboard")
 
-    context = {
+    return render(request, "myapp/payment_form.html", {
         "booking": booking,
         "rate_per_hour": booking.service.rate_per_hour,
         "hours_range": range(0, 24),
         "minutes_range": range(0, 60, 5),
-    }
-    return render(request, "myapp/payment_form.html", context)
+    })
 
 def add_payment(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id)

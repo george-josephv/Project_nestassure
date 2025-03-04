@@ -25,21 +25,32 @@
             color: #333;
         }
         .filter-container {
-            margin-bottom: 20px;
+            position: absolute;
+            top: 20px;
+            right: 20px;
         }
         .filter-dropdown {
-            padding: 8px;
+            padding: 10px;
             font-size: 16px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+            border-radius: 8px;
+            border: 2px solid #007BFF;
+            background: white;
+            color: #333;
             cursor: pointer;
+            outline: none;
+            transition: 0.3s ease-in-out;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .filter-dropdown:hover, .filter-dropdown:focus {
+            border-color: #0056b3;
+            box-shadow: 0px 4px 10px rgba(0, 91, 187, 0.3);
         }
         .service-container {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
             justify-content: center;
-            padding-top: 20px;
+            padding-top: 50px;
         }
         .service-box-link {
             text-decoration: none;
@@ -141,9 +152,8 @@
 
     <!-- Dropdown for Filtering Services -->
     <div class="filter-container">
-        <label for="serviceFilter">Select a Service:</label>
         <select id="serviceFilter" class="filter-dropdown" onchange="filterServices()">
-            <option value="">-- Choose a Service --</option>
+            <option value="">-- FILTER --</option>
             {% for service in services %}
                 <option value="{{ service.service_name|lower }}">{{ service.service_name }}</option>
             {% endfor %}

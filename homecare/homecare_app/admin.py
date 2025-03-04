@@ -25,10 +25,13 @@ class BookingAdmin(admin.ModelAdmin):
     model = Booking
     list_display = ('user__email', 'booking_id',)
     search_fields = ('user__username', 'booking_id')
+    
+class WorkerAdmin(admin.ModelAdmin):
+    filter_horizontal = ('services',)  # Enables better UI for ManyToMany selection
 
 # Register models
 admin.site.register(User)
 admin.site.register(Service)
-admin.site.register(Worker)
+admin.site.register(Worker,WorkerAdmin)
 admin.site.register(Booking, BookingAdmin)
 admin.site.register(Payment)

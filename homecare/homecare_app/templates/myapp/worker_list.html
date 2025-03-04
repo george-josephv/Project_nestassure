@@ -105,7 +105,14 @@
             transition: background 0.3s;
             text-decoration: none;
         }
-
+        .footer-section {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 4px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
         .back-button .btn:hover {
             background-color: #E0C200;
         }
@@ -128,8 +135,7 @@
 <body>
 
     <div class="page-wrapper">
-        {% include 'logospace.html' %}
-
+       {% include 'user_dashmenu.html' %}
         <div class="container">
             <h2>Workers for {{ service.service_name }}</h2>
 

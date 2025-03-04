@@ -6,28 +6,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Service List</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            text-align: center;
-            position: relative;
-            min-height: 100vh;
-            background-color: #f8f9fa;
+   
+   body, html {
+    height: 100%;
+    margin: 0;
+    scroll-behavior: smooth;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-y: auto;
+}
+
+     .service-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            padding-top: 20px;
         }
         h2 {
+            margin-top: 20px;
             margin-bottom: 20px;
             font-size: 28px;
             color: #333;
+            text-align: center; /* Ensures heading is centered */
         }
         .filter-container {
-            position: absolute;
-            top: 20px;
-            right: 20px;
+            position: relative;
+            margin-top: 20px;
+            margin-left: 30px;
+        }
+        .filter-heading {
+            text-align: left;
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #333;
         }
         .filter-dropdown {
             padding: 10px;
@@ -45,13 +64,7 @@
             border-color: #0056b3;
             box-shadow: 0px 4px 10px rgba(0, 91, 187, 0.3);
         }
-        .service-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-            padding-top: 50px;
-        }
+       
         .service-box-link {
             text-decoration: none;
             color: inherit;
@@ -112,13 +125,15 @@
             margin-top: 5px;
             text-align: center;
         }
+        .back-button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
         .back-button {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
             padding: 10px 20px;
             font-size: 16px;
-            background-color: #007BFF;
+            background-color:#E0C200;
             color: white;
             border: none;
             border-radius: 5px;
@@ -127,7 +142,16 @@
             transition: background-color 0.3s ease-in-out;
         }
         .back-button:hover {
-            background-color: #0056b3;
+            background-color:#e0c2008e;
+        }
+
+        .footer-section {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 4px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
         }
         @media (max-width: 768px) {
             .service-container {
@@ -138,22 +162,23 @@
                 width: 90%;
                 height: auto;
             }
-            .back-button {
-                position: static;
-                display: block;
-                margin: 20px auto;
+            .service-box-inner {
+                display: none;
             }
         }
     </style>
 </head>
 <body>
+    <div class="page-wrapper">
+        {% include 'user_dashmenu.html' %} <!-- Common Header -->
 
     <h2>Our Services</h2>
 
-    <!-- Dropdown for Filtering Services -->
+    <!-- Filter Section -->
     <div class="filter-container">
+        <h3 class="filter-heading">Filter</h3>
         <select id="serviceFilter" class="filter-dropdown" onchange="filterServices()">
-            <option value="">-- FILTER --</option>
+            <option value="">All</option>
             {% for service in services %}
                 <option value="{{ service.service_name|lower }}">{{ service.service_name }}</option>
             {% endfor %}
@@ -177,7 +202,14 @@
         {% endfor %}
     </div>
 
-    <a href="{% url 'user_dashboard' %}" class="back-button">Back</a>
+    <div class="back-button-container">
+        <a href="{% url 'user_dashboard' %}" class="back-button">Back</a>
+    </div>
+
+    <section class="footer-section">
+        {% include 'footer.html' %}
+    </section>
+</div>
 
     <script>
         function filterServices() {
@@ -191,6 +223,7 @@
                     item.style.display = "none";
                 }
             });
+            document.querySelector(".service-container").scrollIntoView({ behavior: "smooth" });
         }
     </script>
 

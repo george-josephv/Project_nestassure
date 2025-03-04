@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 # Extending Django User Model
 class User(AbstractUser):
@@ -50,6 +52,7 @@ class Worker(models.Model):
     def __str__(self):
         return self.user.username
 
+
 # Booking Model
 class Booking(models.Model):
     STATUS_CHOICES = (
@@ -58,26 +61,42 @@ class Booking(models.Model):
         ('rejected', 'Rejected'),
         ('completed', 'Completed'),
     )
+    booking_id = models.CharField(max_length=10, editable=False, null=True, blank=False, unique=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookings')
     worker = models.ForeignKey(Worker, on_delete=models.CASCADE, related_name='worker_bookings')
     service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name='service_bookings')
     expected_date = models.DateField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    extra_field = models.TextField(blank=True, null=True)  # Example extra field
 
     def __str__(self):
-        return f"Booking {self.id} - {self.user.username} - {self.worker.user.username}"
+        return f"Booking {self.booking_id} - {self.user.username} - {self.worker.user.username}"
+
+
+# Auto-generate Booking ID in format A10001
+@receiver(pre_save, sender=Booking)
+def generate_booking_id(sender, instance, **kwargs):
+    if not instance.booking_id:
+        last_booking = Booking.objects.order_by('-id').first()
+        if last_booking and last_booking.booking_id.startswith('A'):
+            last_id = int(last_booking.booking_id[1:])
+            instance.booking_id = f"A{last_id + 1}"
+        else:
+            instance.booking_id = "A10001"
+
 
 # Payment Model
 class Payment(models.Model):
     booking = models.OneToOneField(Booking, on_delete=models.CASCADE, related_name='payment')
-    total_hours = models.IntegerField()
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    total_hours = models.IntegerField(default=0)
+    total_minutes = models.IntegerField(default=0)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     is_paid = models.BooleanField(default=False)
 
     def calculate_total(self):
-        self.total_amount = self.total_hours * self.booking.service.rate_per_hour
+        total_time_in_hours = self.total_hours + (self.total_minutes / 60)
+        self.total_amount = total_time_in_hours * self.booking.service.rate_per_hour
         self.save()
 
     def __str__(self):
         return f"Payment {self.id} - {self.booking.user.username}"
-

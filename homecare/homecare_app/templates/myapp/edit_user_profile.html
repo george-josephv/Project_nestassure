@@ -213,7 +213,9 @@
             <div class="profile-container">
                 <div class="header">
                     <h2>PROFILE EDIT</h2>
-                    <a href="{% url 'user_my_profile' %}" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
+                    <a href="javascript:window.history.back();" class="back-btn">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </a>
                 </div>
 
                 {% if user.profile_picture %}

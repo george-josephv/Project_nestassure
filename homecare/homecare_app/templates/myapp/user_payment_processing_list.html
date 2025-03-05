@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Processing</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .top-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding: 10px 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .booking-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        .booking-card:last-child {
+            border-bottom: none;
+        }
+        .user-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+        .details {
+            text-align: left;
+            flex-grow: 1;
+        }
+        .status-paid {
+            color: green;
+            font-weight: bold;
+        }
+        .status-processing {
+            color: orange;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="top-buttons">
+            <h2>Payment Processing Workers</h2>
+            <a href="{% url 'payment_history' %}" class="btn">Payment History</a>
+        </div>
+    
+        {% for booking in processing_bookings %}
+            <div class="booking-card">
+                <img src="{{ booking.worker.user.profile_picture.url }}" alt="Worker Image" class="user-image">
+                <div class="details">
+                    <p><strong>Booking ID:</strong> {{ booking.booking_id }}</p>
+                    <p><strong>Worker Name:</strong> {{ booking.worker.user.username }}</p>
+                    <p><strong>Service:</strong> {{ booking.service.service_name }}</p>
+                    <p><strong>Expected Date:</strong> {{ booking.expected_date }}</p>
+                    <p><strong>Address:</strong> {{ booking.worker.user.state }}, {{ booking.worker.user.district }}, {{ booking.worker.user.place }}, {{ booking.worker.user.housename }}</p>
+                    <p><strong>Email:</strong> {{ booking.worker.user.email }}</p>
+                    <p><strong>Status:</strong> 
+                        {% if booking.payment.is_paid %}
+                            <span class="status-paid">Paid</span>
+                        {% else %}
+                            <span class="status-processing">Payment Processing</span>
+                        {% endif %}
+                    </p>
+                    <a href="{% url 'user_payment_details' booking.id %}" class="btn">Go to Details</a>
+                </div>
+            </div>
+        {% empty %}
+            <p>No workers with payment processing found.</p>
+        {% endfor %}
+    </div>
+
+    <a href="{% url 'user_dashboard' %}" class="btn"><i class="fa fa-arrow-left"></i> Back</a>
+
+
+
+</body>
+</html>

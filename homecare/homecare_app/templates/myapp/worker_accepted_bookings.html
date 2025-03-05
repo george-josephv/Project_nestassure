@@ -122,12 +122,16 @@
                     
                     <!-- Show Next Button Only If Status is Completed -->
                     {% if booking.status|lower == "completed" %}
-                        {% if booking.payment %}  
-                            <button class="btn-processing" style="float: right;">Payment Processing</button>
+                    {% if booking.payment %}
+                        {% if booking.payment.is_paid %}
+                            <button class="btn-processing" style="float: right; background: green;">Payment Completed</button>
                         {% else %}
-                            <a href="{% url 'worker_payment_form' booking.id %}" class="btn-next" style="float: right;">Next</a>
+                            <button class="btn-processing" style="float: right;">Payment Processing</button>
                         {% endif %}
+                    {% else %}
+                        <a href="{% url 'worker_payment_form' booking.id %}" class="btn-next" style="float: right;">Next</a>
                     {% endif %}
+                {% endif %}
                 </div>
             </div>
         {% empty %}

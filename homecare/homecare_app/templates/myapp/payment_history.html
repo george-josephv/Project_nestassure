@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment History</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .history-card {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        .history-card:last-child {
+            border-bottom: none;
+        }
+        .status-paid {
+            color: green;
+            font-weight: bold;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Payment History</h2>
+
+        {% for payment in paid_payments %}
+            <div class="history-card">
+                <p><strong>Booking ID:</strong> {{ payment.booking.booking_id }}</p>
+                <p><strong>Service:</strong> {{ payment.booking.service.service_name }}</p>
+                <p><strong>Worker Name:</strong> {{ payment.booking.worker.user.username }}</p>
+                <p><strong>Total Amount:</strong> ₹{{ payment.total_amount }}</p>
+                <p><strong>Paid On:</strong> {{ current_date|date:"F d, Y" }}</p>
+                <p><strong>Status:</strong> <span class="status-paid">Paid</span></p>
+            </div>
+        {% empty %}
+            <p>No completed payments found.</p>
+        {% endfor %}
+
+        <!-- Button to manually go back -->
+        <a href="{% url 'user_payment_processing_list' %}" class="btn"><i class="fa fa-arrow-left"></i> Back to Payment Processing</a>
+    </div>
+
+</body>
+</html>

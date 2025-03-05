@@ -1,0 +1,57 @@
+{% load static %}
+{% comment %} {% extends "myapp/logospace.html" %} {% endcomment %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">Payment Details</h2>
+    <div class="card p-4 shadow-sm">
+        <p><strong>Booking ID:</strong> {{ payment.booking.booking_id }}</p>
+        <p><strong>Service Booked:</strong> {{ service_booked }}</p>
+        <p><strong>Worker Name:</strong> {{ worker_name }}</p>
+        <p><strong>Worker Email:</strong> {{ worker_email }}</p>
+        <p><strong>Address:</strong> {{ address }}</p>
+        <p><strong>Expected Date:</strong> {{ expected_date }}</p>
+        <p><strong>Work Status:</strong> {{ work_status }}</p>
+        <p><strong>Rate Per Hour:</strong> ₹{{ rate_per_hour }}</p>
+        <p><strong>Total Time:</strong> {{ total_time }}</p>
+        <p><strong>Total Amount:</strong> ₹{{ total_amount }}</p>
+
+        {% if is_paid %}
+            <p class="text-success"><strong>Payment Status:</strong> Paid</p>
+        {% else %}
+            <p class="text-danger"><strong>Payment Status:</strong> Pending</p>
+            <button class="btn btn-primary" onclick="showPaymentPopup()">Go to Pay</button>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Payment Popup -->
+<div id="paymentPopup" class="modal" style="display: none;">
+    <div class="modal-content">
+        <h4>Payment Information</h4>
+        <p>Scan the QR code or use the bank details to make the payment.</p>
+        <img src="{% static 'images/qr_code.jpg' %}" alt="QR Code" class="qr-code">
+        <p><strong>Bank Account:</strong> SBI - 1234567890</p>
+        <button class="btn btn-success" onclick="confirmPayment()">OK</button>
+    </div>
+</div>
+
+<script>
+function showPaymentPopup() {
+    document.getElementById("paymentPopup").style.display = "block";
+}
+
+function confirmPayment() {
+    fetch("{% url 'mark_payment_done' booking_id=booking_id %}", {
+        method: "POST",
+        headers: { "X-CSRFToken": "{{ csrf_token }}" }
+    }).then(response => response.json())
+    .then(data => {
+        if (data.message === "Payment marked as done") {
+            alert("Payment Successful!");
+            location.reload();
+        }
+    });
+}
+</script>
+{% endblock %}

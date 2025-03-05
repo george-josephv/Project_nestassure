@@ -4,9 +4,11 @@ from django.contrib import messages
 from .forms import BookingForm, EditProfileForm
 from .models import User, Service, Worker, Booking, Payment
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from datetime import date
 from django.http import JsonResponse
 from decimal import Decimal
+from django.utils.timezone import now
 
 def landing_page(request):
     return render(request, 'myapp/landingpage.html')
@@ -30,7 +32,8 @@ def login_view(request):
 
 @login_required
 def user_dashboard(request):
-    return render(request, 'myapp/user_dashboard.html')
+    payments = Payment.objects.filter(booking__user=request.user)  # Get all payments for the logged-in user
+    return render(request, 'myapp/user_dashboard.html', {'payments': payments})
 
 def user_logout(request):
     logout(request)
@@ -200,7 +203,7 @@ def worker_accepted_bookings(request):
         'accepted_bookings': accepted_bookings,
         'paid_bookings': paid_bookings
     })
-
+    
 @login_required
 def worker_payment_form(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id)
@@ -215,25 +218,24 @@ def worker_payment_form(request, booking_id):
         # Convert rate_per_hour to Decimal
         rate_per_hour = Decimal(booking.service.rate_per_hour)
 
-        # Calculate total amount before deduction
+        # Calculate total amount with a 15% deduction
         total_amount = total_time_in_hours * rate_per_hour
-
-        # Deduct 15% (worker's commission fee)
-        final_amount = total_amount - (total_amount * Decimal(0.15))
+        final_amount = total_amount * Decimal(0.85)  # Deduct 15%
 
         # Save payment details in the database
-        payment, created = Payment.objects.get_or_create(booking=booking)
+        payment, created = Payment.objects.get_or_create(booking=booking, defaults={"is_paid": False})
         payment.total_hours = total_hours
         payment.total_minutes = total_minutes
         payment.total_amount = final_amount
         payment.save()
 
-        # 🔹 Store booking ID in session
+        # 🔹 Store booking ID in session, preventing duplicates
         if "paid_bookings" not in request.session:
             request.session["paid_bookings"] = []
         
-        request.session["paid_bookings"].append(booking_id)
-        request.session.modified = True  # Ensure session updates
+        if booking_id not in request.session["paid_bookings"]:
+            request.session["paid_bookings"].append(booking_id)
+            request.session.modified = True
 
         messages.success(request, f"Payment recorded! Final amount after 15% deduction: ₹{final_amount:.2f}")
         return redirect("worker_accepted_bookings")
@@ -241,35 +243,64 @@ def worker_payment_form(request, booking_id):
     context = {
         "booking": booking,
         "rate_per_hour": booking.service.rate_per_hour,
-        "hours_range": range(0, 13),
-        "minutes_range": [0, 15, 30, 45],
+        "hours_range": range(0, 25),  # Allow up to 24 hours
+        "minutes_range": range(0, 60),  # Allow all minutes
     }
     return render(request, "myapp/worker_payment_form.html", context)
-# @login_required
 
-# def user_payment_details(request, booking_id):
+@login_required
 
-#     # Display the payment details for a specific booking.
-    
-#     booking = get_object_or_404(Booking, id=booking_id)
-#     payment = get_object_or_404(Payment, booking=booking)
+def user_payment_processing_list(request):
+    # Fetch bookings where payment is pending
+    processing_bookings = Booking.objects.filter(status='completed', payment__isnull=False, payment__is_paid=False)
 
-#     context = {
-#         'booking': booking,
-#         'payment': payment
-#     }
-#     return render(request, 'myapp/user_payment_details.html', context)
+    return render(request, 'myapp/user_payment_processing_list.html', {'processing_bookings': processing_bookings})
 
 
-# def user_payment_success(request, booking_id):
-#     """
-#     Mark the payment as done and redirect to a success page.
-#     """
-#     booking = get_object_or_404(Booking, id=booking_id)
-#     payment = get_object_or_404(Payment, booking=booking)
 
-#     # Update payment status
-#     payment.is_paid = True
-#     payment.save()
+@login_required
+def user_payment_details(request, booking_id):
+    payment = get_object_or_404(Payment, booking__id=booking_id)
 
-#     return render(request, 'myapp/user_payment_success.html', {'booking': booking})
+    context = {
+        'payment': payment,
+        'booking_id': payment.booking.id,  # Default ID
+        'service_booked': payment.booking.service.service_name,
+        'worker_name': payment.booking.worker.user.username,
+        'worker_email': payment.booking.worker.user.email,
+        'address': f"{payment.booking.user.state}, {payment.booking.user.district}, {payment.booking.user.place}, {payment.booking.user.housename}",
+        'expected_date': payment.booking.expected_date,
+        'work_status': payment.booking.status,
+        'rate_per_hour': payment.booking.service.rate_per_hour,
+        'total_time': f"{payment.total_hours} hours {payment.total_minutes} minutes",
+        'total_amount': payment.total_amount,
+        'is_paid': payment.is_paid,  # Check if the payment is completed
+    }
+
+    return render(request, 'myapp/user_payment_details.html', context)
+
+@csrf_exempt
+def mark_payment_done(request, booking_id):
+    if request.method == "POST":
+        payment = get_object_or_404(Payment, booking__id=booking_id)
+        payment.is_paid = True
+        payment.save()
+        return JsonResponse({"message": "Payment marked as done", "status": "paid"})
+
+# histort of payment
+
+
+
+@login_required
+def payment_history(request):
+    paid_payments = Payment.objects.filter(is_paid=True).order_by('id')
+    current_date = now().date()
+
+    # Redirect to "payment-processing/" if no paid payments exist
+    if not paid_payments:
+        return redirect('user_payment_processing_list')  # Replace with your actual URL name
+
+    return render(request, 'myapp/payment_history.html', {
+        'paid_payments': paid_payments,
+        'current_date': current_date
+    })

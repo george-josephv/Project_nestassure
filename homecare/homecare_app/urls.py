@@ -21,8 +21,9 @@ urlpatterns = [
     path('worker/bookings/update/<int:booking_id>/<str:status>/', views.update_booking_status, name='update_booking_status'),
     path('worker/accepted-bookings/',views. worker_accepted_bookings, name='worker_accepted_bookings'),
     path('worker/payment/<int:booking_id>/',views. worker_payment_form, name='worker_payment_form'),
-    # path('payment/details/<int:booking_id>/', views.user_payment_details, name='user_payment_details'),
- 
-    # path('payment-success/<int:booking_id>/', views.user_payment_success, name='user_payment_success'),
+    path('payment-processing/', views.user_payment_processing_list, name='user_payment_processing_list'),
+    path('payment/details/<int:booking_id>/',views. user_payment_details, name='user_payment_details'),
+    path('payment/mark/<int:booking_id>/',views. mark_payment_done, name='mark_payment_done'),
+    path('payment-history/',views. payment_history, name='payment_history'),
 ]
 

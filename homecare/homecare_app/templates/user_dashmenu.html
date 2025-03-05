@@ -171,10 +171,11 @@
         <!-- Profile Picture in Sidebar -->
         <div class="profile-sections">
             {% if user.profile_picture %}
-                <img src="{{ user.profile_picture.url }}" alt="Profile" class="profile-picture-sidebar">
-            {% else %}
-                <img src="https://via.placeholder.com/80" alt="Default Profile" class="profile-picture-sidebar">
-            {% endif %}
+            <img src="{{ user.profile_picture.url }}" alt="Profile" class="profile-picture-sidebar">
+        {% else %}
+            <img src="{% static 'myapp/assets/img/user.png' %}" alt="Default Profile" class="profile-picture-sidebar">
+        {% endif %}
+        
             <h4>{{ user.username }}</h4>
         </div>
         <a href="{% url 'user_dashboard' %}"><i class="bi bi-house-door"></i> Home</a>

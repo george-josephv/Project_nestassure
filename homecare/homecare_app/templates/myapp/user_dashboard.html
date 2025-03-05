@@ -77,7 +77,7 @@
         
                 if (isProfileIncomplete) {
                     document.addEventListener("click", function() {
-                        window.location.href = "{% url 'user_my_profile' %}"; // Redirect to profile editing page on click
+                        window.location.href = "{% url 'edit_user_profile' %}"; // Redirect to profile editing page on click
                     }, { once: true }); // Ensures the event fires only once
                 }
             });

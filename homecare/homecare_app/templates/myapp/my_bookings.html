@@ -61,6 +61,11 @@
             color: white;
         }
 
+        .action-header {
+            background-color: purple;
+            color: white;
+        }
+
         /* Status Labels */
         .status-pending {
             background-color: orange;
@@ -138,10 +143,11 @@
                     <th class="assigned-header">Service</th>
                     <th class="date-header">Expected Date</th>
                     <th class="status-header">Status</th>
+                    <th class="action-header">Action</th>
                 </tr>
             </thead>
             <tbody>
-                {% for booking in bookings %}
+                {% for booking in bookings|dictsortreversed:"expected_date" %}
                 <tr>
                     <td>{{ booking.worker.user.username }}</td>
                     <td>{{ booking.service.service_name }}</td>
@@ -151,16 +157,20 @@
                             <span class="status-pending">Pending</span>
                         {% elif booking.status == "accepted" %}
                             <span class="status-accepted">Accepted</span>
+                        {% elif booking.status == "rejected" %}
+                            <span class="status-rejected">Rejected</span>
+                        {% elif booking.status == "completed" %}
+                            <span class="status-completed">Completed</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if booking.status == "accepted" %}
                             <form action="{% url 'my_bookings' %}" method="POST" style="display:inline;">
                                 {% csrf_token %}
                                 <input type="hidden" name="booking_id" value="{{ booking.id }}">
                                 <input type="hidden" name="status" value="completed">
                                 <button type="submit" class="complete-button">Complete</button>
                             </form>
-                        {% elif booking.status == "rejected" %}
-                            <span class="status-rejected">Rejected</span>
-                        {% elif booking.status == "completed" %}
-                            <span class="status-completed">Completed</span>
                         {% endif %}
                     </td>
                 </tr>

@@ -181,7 +181,7 @@
                 {% endif %}
 
                 <div class="profile-info">
-                    <div class="info-box"><i class="fas fa-user"></i> {{ user.username }}</div>
+                    <div class="info-box"><i class="fas fa-user"></i> {{ user.first_name }} {{ user.last_name }}</div>
                     <div class="info-box"><i class="fas fa-calendar"></i> {{ user.dob|default:"Not Provided" }}</div>
                     <div class="info-box"><i class="fas fa-tint"></i> {{ user.blood_group|default:"Not Provided" }}</div>
                     <div class="info-box"><i class="fas fa-phone"></i> {{ user.phone_number|default:"Not Provided" }}</div>

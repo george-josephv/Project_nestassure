@@ -31,7 +31,7 @@
             justify-content: center;
             flex-grow: 1;
             padding: 20px;
-            margin-top: 40px;
+            margin-top: 80px;
         }
 
         .profile-container {
@@ -154,7 +154,7 @@
         .footer-section {
             text-align: center;
             background-color: #ffffff;
-            padding: 15px;
+            padding: 4px;
             position: relative;
             bottom: 0;
             width: 100%;
@@ -165,15 +165,15 @@
 
     <div class="page-wrapper">
         <!-- Logo Section -->
-        {% include 'logospace.html' %}
-
+        {% include 'user_dashmenu.html' %}
         <!-- Profile Section -->
         <section class="profile-section">
             <div class="profile-container">
                 <div class="header">
                     <h2>{{ user.username|upper }}</h2>
-                    <a href="{% url 'user_dashboard' %}" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
-                </div>
+                    <a href="javascript:window.history.back();" class="back-btn">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </a>                </div>
 
                 {% if user.profile_picture %}
                     <img src="{{ user.profile_picture.url }}" alt="User Photo" class="profile-photo">
@@ -182,7 +182,7 @@
                 {% endif %}
 
                 <div class="profile-info">
-                    <div class="info-box"><i class="fas fa-user"></i> {{ user.username }}</div>
+                    <div class="info-box"><i class="fas fa-user"></i> {{ user.first_name }} {{ user.last_name }}</div>
                     <div class="info-box"><i class="fas fa-calendar"></i> {{ user.dob|default:"Not Provided" }}</div>
                     <div class="info-box"><i class="fas fa-tint"></i> {{ user.blood_group|default:"Not Provided" }}</div>
                     <div class="info-box"><i class="fas fa-phone"></i> {{ user.phone_number|default:"Not Provided" }}</div>

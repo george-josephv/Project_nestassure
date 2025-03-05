@@ -1,0 +1,215 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    
+    <style>
+        /* General Body Styling */
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            width: 100%;
+            background-color: #212529;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1001;
+            height: 70px;
+        }
+
+        .menu-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            margin-left: 10px;
+        }
+
+        /* Logo Styling */
+        .logo-container {
+            margin-left: auto; /* Pushes the logo to the right */
+            display: flex;
+            align-items: center;
+            color: #E0C200;
+            margin-right: 30px;
+        }
+
+        .logo-container img {
+            height: 50px;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 250px;
+            background-color: #212529;
+            color: white;
+            padding: 15px;
+            height: 100vh;
+            position: fixed;
+            left: -250px;
+            transition: all 0.3s;
+            top: 0;
+            z-index: 1002;
+            padding-top: 70px;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        /* Profile Section in Sidebar */
+        .profile-sections {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .profile-picture-sidebar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #E0C200;
+            margin-top: 10px;
+        }
+
+        .profile-sections h4 {
+            margin-top: 10px;
+            font-size: 16px;
+            color: white;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Sidebar hover effect */
+        .sidebar a:hover {
+            background: #E0C200 !important;
+            color: black !important;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            color: white;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 50%;
+                left: -100%;
+            }
+            .sidebar.active {
+                left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="menu-container">
+            <button class="menu-btn" onclick="toggleMenu()"><i class="bi bi-list"></i> Menu</button>
+        </div>
+
+        <!-- Logo on the right -->
+        <div class="logo-container">
+            <h3>NEST ASSURE</h3>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <button class="close-btn" onclick="toggleMenu()"><i class="bi bi-x-lg"></i></button>
+
+        <!-- Profile Picture in Sidebar -->
+        <div class="profile-sections">
+            {% if user.profile_picture %}
+            <img src="{{ user.profile_picture.url }}" alt="Profile" class="profile-picture-sidebar">
+        {% else %}
+            <img src="{% static 'myapp/assets/img/user.png' %}" alt="Default Profile" class="profile-picture-sidebar">
+        {% endif %}
+        
+            <h4>{{ user.username }}</h4>
+        </div>
+        <a href="{% url 'user_dashboard' %}"><i class="bi bi-house-door"></i> Home</a>
+        <a href="{% url 'user_my_profile' %}"><i class="bi bi-person"></i> Profile</a>
+        <a href="{% url 'servicelist' %}"><i class="bi bi-briefcase"></i> Services</a>
+        <a href="{% url 'my_bookings' %}"><i class="bi bi-list-check"></i> Status</a>
+        <a href="#"><i class="bi bi-credit-card"></i> Payment Status</a>
+        <a href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"><i class="bi bi-box-arrow-right"></i> Logout</a>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to log out?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a href="{% url 'logout' %}" class="btn btn-primary">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Toggle Script -->
+    <script>
+        function toggleMenu() {
+            document.getElementById("sidebar").classList.toggle("active");
+        }
+    </script>
+</body>
+</html>

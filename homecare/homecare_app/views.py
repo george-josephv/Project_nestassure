@@ -86,17 +86,18 @@ def worker_list(request, service_id):
     return render(request, 'myapp/worker_list.html', {
         'services': services,
         'workers': workers,
-        'selected_service': selected_service
+        'service': selected_service  # Updated key
     })
 
+
 @login_required
-def book_worker(request, worker_id):
+def book_worker(request, worker_id, service):
     worker = get_object_or_404(Worker, id=worker_id)
-    service = worker.services.first()
+    service = get_object_or_404(Service, service_name=service)
 
     if not service:
         messages.error(request, "This worker has no associated services.")
-        return redirect("worker_list")
+        return redirect("worker_list", service_id=worker.services.first().id)
 
     if request.method == "POST":
         form = BookingForm(request.POST)
@@ -115,7 +116,8 @@ def book_worker(request, worker_id):
     return render(request, "myapp/book_worker.html", {
         "worker": worker, 
         "form": form,
-        "service": service  
+        "service": service,
+        "booking_service_id": service.id  # Added booking_service_id to context
     })
 
 @login_required

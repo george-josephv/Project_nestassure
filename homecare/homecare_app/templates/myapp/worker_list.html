@@ -154,7 +154,7 @@
                                 <small><i class="fas fa-home"></i> Place: {{ worker.user.place }}</small>
                                 <small><i class="fas fa-envelope"></i> Email: {{ worker.user.email }}</small>
                             </div>
-                            <a href="{% url 'book_worker' worker.id %}" class="btn btn-primary">Book Now</a>
+                            <a href="{% url 'book_worker' worker.id service.service_name %}" class="btn btn-primary">Book Now</a>
                         </div>
                     </div>
                 {% empty %}

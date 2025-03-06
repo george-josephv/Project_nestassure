@@ -274,13 +274,6 @@ def mark_payment_done(request, booking_id):
 
 # histort of payment
 
-
-
-from django.utils.timezone import now
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from .models import Payment
-
 @login_required
 def payment_history(request):
     # Fetch payments only for the logged-in user

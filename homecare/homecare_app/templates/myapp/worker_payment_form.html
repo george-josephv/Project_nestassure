@@ -15,7 +15,7 @@
         .btn-submit:hover { background: darkgreen; }
         .btn-processing {
             padding: 10px 20px;
-            background: #ffa500; /* Orange */
+            background: #ffa500;
             color: white;
             border: none;
             border-radius: 5px;
@@ -23,6 +23,45 @@
             font-weight: bold;
             cursor: not-allowed;
             float: right;
+        }
+        /* Popup Styling */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            z-index: 1000;
+        }
+        .popup-content {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        .popup button {
+            padding: 10px 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .popup button:hover {
+            background: #0056b3;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
         }
     </style>
     <script>
@@ -32,20 +71,24 @@
             let totalHours = hours + (minutes / 60);
             let ratePerHour = parseFloat("{{ booking.service.rate_per_hour }}");
             let totalAmount = totalHours * ratePerHour;
-            let finalAmount = totalAmount - (totalAmount * 0.15);  // Deduct 15%
             document.getElementById("total_amount").value = totalAmount.toFixed(2);
-            return finalAmount.toFixed(2);  // Return final amount after deduction
         }
 
         function confirmPayment(event) {
             event.preventDefault(); // Prevent form submission
 
-            let finalAmount = calculateTotal();
-            let confirmation = confirm("Your total amount after 15% deduction is ₹" + finalAmount + ". Click OK to proceed.");
+            let totalAmount = document.getElementById("total_amount").value;
 
-            if (confirmation) {
-                document.getElementById("payment-form").submit(); // Submit the form
-            }
+            // Show the popup
+            document.getElementById("popup-message").innerText = "Your total amount = ₹" + totalAmount;
+            document.getElementById("popup").style.display = "block";
+            document.getElementById("overlay").style.display = "block";
+        }
+
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById("payment-form").submit(); // Submit form after closing popup
         }
     </script>
 </head>
@@ -58,7 +101,7 @@
 
         <div class="form-group">
             <label>Booking ID:</label>
-            <input type="text" value="{{ booking.booking_id }}" disabled>  <!-- Added Booking ID -->
+            <input type="text" value="{{ booking.booking_id }}" disabled>
         </div>
 
         <div class="form-group">
@@ -114,11 +157,18 @@
         </div>
 
         {% if booking.payment %}
-            <button class="btn-processing">Payment Processing</button>  <!-- Show if payment exists -->
+            <button class="btn-processing">Payment Processing</button>
         {% else %}
             <button type="submit" class="btn-submit">Submit Payment</button>
         {% endif %}
     </form>
+</div>
+
+<!-- Popup -->
+<div class="overlay" id="overlay"></div>
+<div class="popup" id="popup">
+    <div class="popup-content" id="popup-message"></div>
+    <button onclick="closePopup()">OK</button>
 </div>
 
 </body>

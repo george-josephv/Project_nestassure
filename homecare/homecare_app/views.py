@@ -35,6 +35,7 @@ def user_dashboard(request):
     payments = Payment.objects.filter(booking__user=request.user)  # Get all payments for the logged-in user
     return render(request, 'myapp/user_dashboard.html', {'payments': payments})
 
+@login_required
 def user_logout(request):
     logout(request)
     return render(request, 'myapp/landingpage.html')
@@ -43,10 +44,12 @@ def user_logout(request):
 def worker_dashboard(request):
     return render(request, 'myapp/workerdashome.html')
 
+@login_required
 def worker_logout(request):
     logout(request)
     return render(request, 'myapp/landingpage.html')
 
+@login_required
 def signup_view(request):
     if request.method == "POST":
         username = request.POST.get("username")
@@ -74,10 +77,12 @@ def signup_view(request):
 
     return render(request, "myapp/signup.html")
 
+@login_required
 def servicelist(request):
     services = Service.objects.all()
     return render(request, 'myapp/servicelist.html', {'services': services})
 
+@login_required
 def worker_list(request, service_id):
     services = Service.objects.all()
     selected_service = get_object_or_404(Service, id=service_id) if service_id else None
@@ -120,26 +125,47 @@ def book_worker(request, worker_id, service):
         "booking_service_id": service.id  # Added booking_service_id to context
     })
 
-@login_required
+# today updates
+
 def my_bookings(request):
     bookings = Booking.objects.filter(user=request.user)
+    services = Service.objects.all()
 
-    if request.method == "POST":
-        booking_id = request.POST.get("booking_id")
-        status = request.POST.get("status")
+    # Get filter values from GET request
+    search_query = request.GET.get("worker_name", "").strip()
+    selected_status = request.GET.get("status", "all")
+    selected_date = request.GET.get("expected_date", "")
+    selected_service = request.GET.get("service", "all")
 
-        booking = get_object_or_404(Booking, id=booking_id, user=request.user)
+    # Filter by worker name
+    if search_query:
+        bookings = bookings.filter(worker__user__username__icontains=search_query)
 
-        if booking.status == "accepted" and status == "completed":
-            booking.status = "completed"
-            booking.save()
-            messages.success(request, "Booking marked as Completed!")
-        else:
-            messages.error(request, "Only Accepted bookings can be completed.")
+    # Filter by status
+    if selected_status != "all":
+        bookings = bookings.filter(status=selected_status)
 
-        return redirect("my_bookings")
+    # Filter by expected date
+    if selected_date:
+        bookings = bookings.filter(expected_date=selected_date)
 
-    return render(request, "myapp/my_bookings.html", {"bookings": bookings})
+    # Filter by service
+    if selected_service != "all":
+        bookings = bookings.filter(service__id=selected_service)
+
+    return render(
+        request,
+        "myapp/my_bookings.html",
+        {
+            "bookings": bookings,
+            "services": services,
+            "search_query": search_query,
+            "selected_status": selected_status,
+            "selected_date": selected_date,
+            "selected_service": selected_service,
+        },
+    )
+
 
 @login_required
 def user_my_profile(request):
@@ -212,9 +238,9 @@ def worker_payment_form(request, booking_id):
         # Convert rate_per_hour to Decimal
         rate_per_hour = Decimal(booking.service.rate_per_hour)
 
-        # Calculate total amount with a 15% deduction
+    #    calculate total
         total_amount = total_time_in_hours * rate_per_hour
-        final_amount = total_amount * Decimal(0.85)  # Deduct 15%
+        final_amount = total_amount 
 
         # Save payment details in the database
         payment, created = Payment.objects.get_or_create(booking=booking, defaults={"is_paid": False})

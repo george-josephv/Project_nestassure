@@ -118,12 +118,145 @@
         .complete-button:hover {
             background-color: darkgreen;
         }
+        /* Filter & Search Styling */
+        .filter-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-input,
+        .filter-dropdown,
+        .date-input {
+            padding: 10px;
+            width: 200px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .search-input:focus,
+        .filter-dropdown:focus,
+        .date-input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+        .filter-actions {
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;}
+        
+        .filter-button {
+            padding: 10px 15px;
+            background-color:rgb(23, 70, 121);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            
+        }
+        
+        .filter-button:hover {
+            background-color:rgb(0, 122, 179);
+        }
+        
+        @media (max-width: 768px) {
+            .filter-container {
+                flex-direction: column;
+            }
+        }
+        
+
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>My Bookings</h2>
+    <!-- Filter and Search -->
+<div class="filter-container">
+
+    <!-- Search by Worker Name -->
+    <input type="text" id="search-box" class="search-input" placeholder="🔍 Search by Worker Name" value="{{ search_query|default:'' }}">
+
+       <!-- Filter by Service -->
+       <select id="service-filter" class="filter-dropdown">
+        <option value="all" {% if selected_service == "all" or not selected_service %}selected{% endif %}>All Services</option>
+        {% for service in services %}
+            <option value="{{ service.id }}" {% if selected_service == service.id|stringformat:"s" %}selected{% endif %}>
+                {{ service.service_name }}
+            </option>
+        {% endfor %}
+    </select>
+    
+    <!-- Filter by Expected Date -->
+    <input type="date" id="date-filter" class="date-input" value="{{ selected_date|default:'' }}">
+
+    <!-- Filter by Status -->
+    <select id="status-filter" class="filter-dropdown">
+        <option value="all" {% if selected_status == "all" or not selected_status %}selected{% endif %}>All Status</option>
+        <option value="pending" {% if selected_status == "pending" %}selected{% endif %}>Pending</option>
+        <option value="accepted" {% if selected_status == "accepted" %}selected{% endif %}>Accepted</option>
+        <option value="rejected" {% if selected_status == "rejected" %}selected{% endif %}>Rejected</option>
+        <option value="completed" {% if selected_status == "completed" %}selected{% endif %}>Completed</option>
+    </select>
+
+
+ 
+
+    <!-- Apply Button -->
+    <div class="filter-actions">
+        <button onclick="applyFilters()" class="filter-button">Apply Filters</button>
+    </div>
+</div>
+
+
+<script>
+    function applyFilters() {
+        const workerName = document.getElementById("search-box").value;
+        const status = document.getElementById("status-filter").value;
+        const expectedDate = document.getElementById("date-filter").value;
+        const service = document.getElementById("service-filter").value;
+        const url = new URL(window.location.href);
+        
+        if (workerName) {
+            url.searchParams.set("worker_name", workerName);
+        } else {
+            url.searchParams.delete("worker_name");
+        }
+
+        if (status !== "all") {
+            url.searchParams.set("status", status);
+        } else {
+            url.searchParams.delete("status");
+        }
+
+        if (expectedDate) {
+            url.searchParams.set("expected_date", expectedDate);
+        } else {
+            url.searchParams.delete("expected_date");
+        }
+
+        if (service !== "all") {
+            url.searchParams.set("service", service);
+        } else {
+            url.searchParams.delete("service");
+        }
+
+        window.location.href = url.toString();
+    }
+</script>
 
     {% if messages %}
         <ul style="list-style: none; padding: 0;">

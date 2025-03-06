@@ -37,33 +37,7 @@
             color: #333;
             text-align: center; /* Ensures heading is centered */
         }
-        .filter-container {
-            position: relative;
-            margin-top: 20px;
-            margin-left: 30px;
-        }
-        .filter-heading {
-            text-align: left;
-            font-size: 16px;
-            margin-bottom: 8px;
-            color: #333;
-        }
-        .filter-dropdown {
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 8px;
-            border: 2px solid #007BFF;
-            background: white;
-            color: #333;
-            cursor: pointer;
-            outline: none;
-            transition: 0.3s ease-in-out;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .filter-dropdown:hover, .filter-dropdown:focus {
-            border-color: #0056b3;
-            box-shadow: 0px 4px 10px rgba(0, 91, 187, 0.3);
-        }
+      
        
         .service-box-link {
             text-decoration: none;
@@ -154,19 +128,67 @@
             bottom: 0;
             width: 100%;
         }
-        @media (max-width: 768px) {
-            .service-container {
-                flex-direction: column;
-                align-items: center;
-            }
-            .service-box {
-                width: 90%;
-                height: auto;
-            }
-            .service-box-inner {
-                display: none;
-            }
-        }
+        /* Filter & Search Section */
+.filter-search-container {
+    display: flex;
+    justify-content: center; /* Center align */
+    align-items: center;
+    gap: 15px;
+    padding: 12px;
+    flex-wrap: wrap; /* Responsive */
+    background: #f8f9fa;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+/* General Input & Dropdown Styling */
+.search-box, .filter-dropdown {
+    padding: 12px 15px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #007BFF;
+    background: white;
+    color: #333;
+    transition: all 0.3s ease-in-out;
+    outline: none;
+    font-weight: 500;
+}
+
+/* Search Box */
+.search-box {
+    width: 280px;
+    padding-left: 40px; /* Space for search icon */
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23007BFF" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.398 1.4h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.114-.101zM12 6.5A5.5 5.5 0 1 1 1 6.5a5.5 5.5 0 0 1 11 0z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    background-size: 20px;
+}
+
+/* Dropdown */
+.filter-dropdown {
+    cursor: pointer;
+    min-width: 200px;
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23007BFF" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5H7z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .filter-search-container {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .search-box, .filter-dropdown {
+        width: 100%; /* Full width on small screens */
+    }
+}
+
+
     </style>
 </head>
 <body>
@@ -176,15 +198,17 @@
     <h2>Our Services</h2>
 
     <!-- Filter Section -->
-    <div class="filter-container">
-        <h3 class="filter-heading">Filter</h3>
-        <select id="serviceFilter" class="filter-dropdown" onchange="filterServices()">
-            <option value="">All</option>
-            {% for service in services %}
-                <option value="{{ service.service_name|lower }}">{{ service.service_name }}</option>
-            {% endfor %}
-        </select>
-    </div>
+    <!-- Search and Filter Section -->
+<div class="filter-search-container">
+    <input type="text" id="search-box" class="search-box" placeholder="Search services...">
+    <select id="filter-dropdown" class="filter-dropdown">
+        <option value="">All Services</option>
+        {% for service in services %}
+            <option value="{{ service.service_name }}">{{ service.service_name }}</option>
+        {% endfor %}
+    </select>
+</div>
+
 
     <div class="service-container">
         {% for service in services %}
@@ -212,21 +236,31 @@
     </section>
 </div>
 
-    <script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const searchBox = document.getElementById("search-box");
+        const filterDropdown = document.getElementById("filter-dropdown");
+        const serviceItems = document.querySelectorAll(".service-item");
+    
         function filterServices() {
-            var selectedService = document.getElementById("serviceFilter").value.toLowerCase();
-            var serviceItems = document.querySelectorAll(".service-item");
-            
-            serviceItems.forEach(function(item) {
-                if (selectedService === "" || item.getAttribute("data-service") === selectedService) {
-                    item.style.display = "block";
-                } else {
-                    item.style.display = "none";
-                }
+            const searchText = searchBox.value.toLowerCase();
+            const filterText = filterDropdown.value.toLowerCase();
+    
+            serviceItems.forEach(item => {
+                const serviceName = item.getAttribute("data-service").toLowerCase();
+    
+                const matchesSearch = serviceName.includes(searchText);
+                const matchesFilter = filterText === "" || serviceName === filterText;
+    
+                item.style.display = matchesSearch && matchesFilter ? "flex" : "none";
             });
-            document.querySelector(".service-container").scrollIntoView({ behavior: "smooth" });
         }
+    
+        searchBox.addEventListener("keyup", filterServices);
+        filterDropdown.addEventListener("change", filterServices);
+    });
     </script>
+    
 
 </body>
 </html>

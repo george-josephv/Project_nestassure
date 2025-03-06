@@ -11,8 +11,7 @@ from decimal import Decimal
 from django.utils.timezone import now
 
 def landing_page(request):
-    services = Service.objects.all()
-    return render(request, 'myapp/landingpage.html', {'services': services})
+    return render(request, 'myapp/landingpage.html')
 
 def login_view(request):
     if request.method == "POST":
@@ -50,7 +49,7 @@ def worker_logout(request):
     logout(request)
     return render(request, 'myapp/landingpage.html')
 
-
+@login_required
 def signup_view(request):
     if request.method == "POST":
         username = request.POST.get("username")
@@ -125,7 +124,7 @@ def book_worker(request, worker_id, service):
         "service": service,
         "booking_service_id": service.id  # Added booking_service_id to context
     })
-
+@login_required
 # today updates
 def my_bookings(request):
     bookings = Booking.objects.filter(user=request.user)

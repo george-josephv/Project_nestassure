@@ -49,12 +49,12 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link close-menu menu-item" href="#services">
-                    <i class="bi bi-gear me-2"></i> Services
+                    <i class="bi bi-gear me-2"></i> Why Choose Us!
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link close-menu menu-item" href="#portfolio">
-                    <i class="bi bi-briefcase me-2"></i> Portfolio
+                    <i class="bi bi-briefcase me-2"></i> Services
                 </a>
             </li>
             <li class="nav-item">
@@ -141,46 +141,83 @@
                 <a class="btn btn-primary btn-xl text-uppercase" href="#services">Let's Go</a>
             </div>
         </header>
-        <!-- Services-->
-        <section class="page-section" id="services">
-            <div class="container">
-                <div class="text-center">
-                    <h2 class="section-heading text-uppercase">Services</h2>
-                    <h3 class="section-subheading text-muted">Lorem ipsum dolor sit amet consectetur.</h3>
-                </div>
-                <div class="row text-center">
-                    <div class="col-md-4">
-                        <span class="fa-stack fa-4x">
-                            <i class="fas fa-circle fa-stack-2x text-primary"></i>
-                            <i class="fas fa-shopping-cart fa-stack-1x fa-inverse"></i>
-                        </span>
-                        <h4 class="my-3">E-Commerce</h4>
-                        <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit.</p>
-                    </div>
-                    <div class="col-md-4">
-                        <span class="fa-stack fa-4x">
-                            <i class="fas fa-circle fa-stack-2x text-primary"></i>
-                            <i class="fas fa-laptop fa-stack-1x fa-inverse"></i>
-                        </span>
-                        <h4 class="my-3">Responsive Design</h4>
-                        <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit.</p>
-                    </div>
-                    <div class="col-md-4">
-                        <span class="fa-stack fa-4x">
-                            <i class="fas fa-circle fa-stack-2x text-primary"></i>
-                            <i class="fas fa-lock fa-stack-1x fa-inverse"></i>
-                        </span>
-                        <h4 class="my-3">Web Security</h4>
-                        <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
         
+
+        <!-- Why Choose Us (Using id="services" for CSS compatibility) -->
+    <!-- Why Choose Us (Using id="services" for CSS compatibility) -->
+<section class="page-section" id="services">
+    <div class="container">
+        <div class="text-center">
+            <h2 class="section-heading text-uppercase">Why Choose Us</h2>
+            <h3 class="section-subheading text-muted">We bring convenience, opportunities, and reliability to your doorstep.</h3>
+        </div>
+        <div class="row text-center">
+            <!-- Reason 1: Empowering Local Workers -->
+            <div class="col-md-4">
+                <span class="fa-stack fa-4x">
+                    <i class="fas fa-circle fa-stack-2x text-primary"></i>
+                    <i class="fas fa-briefcase fa-stack-1x fa-inverse"></i>
+                </span>
+                <h4 class="my-3">Empowering Local Workers</h4>
+                <p class="text-muted">Our platform creates job opportunities by connecting skilled workers with those in need of services.</p>
+            </div>
+
+            <!-- Reason 2: Elderly-Friendly Services -->
+            <div class="col-md-4">
+                <span class="fa-stack fa-4x">
+                    <i class="fas fa-circle fa-stack-2x text-primary"></i>
+                    <i class="fas fa-user-shield fa-stack-1x fa-inverse"></i>
+                </span>
+                <h4 class="my-3">Accessible for Everyone</h4>
+                <p class="text-muted">Designed for all age groups, especially seniors, ensuring hassle-free service booking from home.</p>
+            </div>
+
+            <!-- Reason 3: Fair & Flexible Hiring -->
+            <div class="col-md-4">
+                <span class="fa-stack fa-4x">
+                    <i class="fas fa-circle fa-stack-2x text-primary"></i>
+                    <i class="fas fa-handshake fa-stack-1x fa-inverse"></i>
+                </span>
+                <h4 class="my-3">Fair & Flexible Hiring</h4>
+                <p class="text-muted">Users can easily hire workers, and workers have the freedom to accept or decline jobs.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Embedded CSS to Fix Alignment -->
+ <style>
+ /* Increase the size of the yellow background circle */
+.fa-stack .fa-circle {
+    font-size: 4rem;  /* Adjust the background circle size */
+}
+
+/* Increase the size of the white icon inside */
+.fa-stack .fa-stack-1x {
+    font-size: 2rem;  /* Make the inner icon bigger */
+}
+
+/* Ensure proper spacing around the icon */
+.fa-stack {
+    width: 5rem;  /* Keeps the whole icon stack balanced */
+    height: 5rem;
+    line-height: 5rem;
+    margin-bottom: 2.5rem;
+}
+
+/* Center the icons properly within the circle */
+.fa-stack-1x {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+</style>
+
         <!-- Services Section -->
 
         <!-- Services Section -->
-<section class="page-section bg-light" id="services">
+<section class="page-section bg-light" id="portfolio">
     <div class="container">
         <div class="text-center">
             <h2 class="section-heading text-uppercase">Our Services</h2>
@@ -319,7 +356,7 @@
 
 /* Back Side */
 .flip-card-back {
-    background: #2c003e; /* Dark Purple */
+    background: #343a40; 
     color: white;
     transform: rotateY(180deg);
     padding: 20px;

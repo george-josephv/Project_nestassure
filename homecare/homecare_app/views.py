@@ -126,46 +126,26 @@ def book_worker(request, worker_id, service):
     })
 
 # today updates
-
 def my_bookings(request):
     bookings = Booking.objects.filter(user=request.user)
-    services = Service.objects.all()
+    services = Service.objects.all()  # Fetch all services
 
-    # Get filter values from GET request
-    search_query = request.GET.get("worker_name", "").strip()
-    selected_status = request.GET.get("status", "all")
-    selected_date = request.GET.get("expected_date", "")
-    selected_service = request.GET.get("service", "all")
+    if request.method == "POST":
+        booking_id = request.POST.get("booking_id")
+        status = request.POST.get("status")
 
-    # Filter by worker name
-    if search_query:
-        bookings = bookings.filter(worker__user__username__icontains=search_query)
+        booking = get_object_or_404(Booking, id=booking_id, user=request.user)
 
-    # Filter by status
-    if selected_status != "all":
-        bookings = bookings.filter(status=selected_status)
+        if booking.status == "accepted" and status == "completed":
+            booking.status = "completed"
+            booking.save()
+            messages.success(request, "Booking marked as Completed!")
+        else:
+            messages.error(request, "Only Accepted bookings can be completed.")
 
-    # Filter by expected date
-    if selected_date:
-        bookings = bookings.filter(expected_date=selected_date)
+        return redirect("my_bookings")
 
-    # Filter by service
-    if selected_service != "all":
-        bookings = bookings.filter(service__id=selected_service)
-
-    return render(
-        request,
-        "myapp/my_bookings.html",
-        {
-            "bookings": bookings,
-            "services": services,
-            "search_query": search_query,
-            "selected_status": selected_status,
-            "selected_date": selected_date,
-            "selected_service": selected_service,
-        },
-    )
-
+    return render(request, "myapp/my_bookings.html", {"bookings": bookings, "services": services})
 
 @login_required
 def user_my_profile(request):

@@ -276,12 +276,18 @@ def mark_payment_done(request, booking_id):
 
 
 
+from django.utils.timezone import now
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Payment
+
 @login_required
 def payment_history(request):
-    paid_payments = Payment.objects.filter(is_paid=True).order_by('id')
+    # Fetch payments only for the logged-in user
+    paid_payments = Payment.objects.filter(booking__user=request.user, is_paid=True).order_by('id')
     current_date = now().date()
 
-    # Redirect to "payment-processing/" if no paid payments exist
+    # Redirect to "payment-processing/" if no paid payments exist for the logged-in user
     if not paid_payments:
         return redirect('user_payment_processing_list')  # Replace with your actual URL name
 

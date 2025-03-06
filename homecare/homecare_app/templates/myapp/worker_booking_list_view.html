@@ -12,83 +12,75 @@
             text-align: center;
             padding: 20px;
         }
+        .main-container {
+        max-width: 100%;
+        margin: 0 auto;
+       
+        padding: 20px;
+        border-radius: 10px;
+       
+    }
         .container {
-            max-width: 700px;
+            max-width: 1100px;
             margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        .booking-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
         }
         .booking-card {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px;
-            border-bottom: 1px solid #ddd;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
-        .booking-card:last-child {
-            border-bottom: none;
+        .profile-image-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
         }
         .user-image {
-            width: 60px;
-            height: 60px;
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
-            margin-right: 15px;
             object-fit: cover;
+            border: 3px solid #FFD700;
         }
-        .details {
-            text-align: left;
-            flex-grow: 1;
+        .btn-status {
+    padding: 6px 12px;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    border: none;
+}
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+            margin-bottom: 30px;
         }
         .btn {
-            padding: 6px 12px;
-            border: none;
+            padding: 8px 15px;
             border-radius: 5px;
             font-size: 14px;
             cursor: pointer;
-            margin-left: 5px;
-        }
-        .btn-accept {
-            background: green;
-            color: white;
-        }
-        .btn-reject {
-            background: red;
-            color: white;
-        }
-        .btn-status {
-            padding: 6px 12px;
-            border-radius: 5px;
-            font-size: 14px;
-            color: white;
             font-weight: bold;
-            cursor: default;
+            background: none;
             border: none;
         }
-        .accepted {
-            background: green;
-        }
-        .rejected {
-            background: red;
-        }
-        .pending {
-            background: orange;
-        }
-        .btn-back {
-            display: inline-block;
-            padding: 10px 20px;
-            background:rgb(190, 156, 18);
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-        .btn-back:hover {
-            background:rgb(77, 214, 79);
-        }
-        /* Confirmation Box Styling */
+        .btn-accept { background: green; color: white; }
+        .btn-reject { background: red; color: white; }
+        .btn-status { padding: 6px 12px; border-radius: 5px; color: white; font-weight: bold; }
+        .accepted { background: green; }
+        .rejected { background: red; }
+        .pending { background: orange; }
+
         .confirmation-box {
             display: none;
             position: fixed;
@@ -112,6 +104,60 @@
             background: rgba(0, 0, 0, 0.5);
             z-index: 999;
         }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        .bookid {
+            text-align: left;
+            background-color: #FFD700;
+            color: #211717;
+            padding: 10px;
+        }
+        .bookid p {
+            margin-left: 10px;
+            font-size: 10px;
+        }
+         /* Responsive Design */
+         @media (max-width: 768px) {
+            .booking-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+            }
+            .btn-container {
+                flex-direction: column;
+                gap: 5px;
+            }
+            .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                max-width: 100%;
+            }
+            .booking-card {
+                padding: 15px;
+            }
+            .user-image {
+                width: 70px;
+                height: 70px;
+            }
+            .btn {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+        }
+
     </style>
     <script>
         let selectedBookingId = null;
@@ -120,7 +166,7 @@
         function showConfirmation(bookingId, status) {
             selectedBookingId = bookingId;
             selectedStatus = status;
-            document.getElementById("confirmation-message").innerText = `You ${status} this work?`;
+            document.getElementById("confirmation-message").innerText = `Are you sure you want to ${status} this booking?`;
             document.getElementById("confirmation-box").style.display = "block";
             document.getElementById("overlay").style.display = "block";
         }
@@ -158,50 +204,48 @@
     </script>
 </head>
 <body>
-
-<!-- Overlay Background -->
-<div id="overlay" class="overlay" onclick="hideConfirmation()"></div>
-
-<!-- Confirmation Box -->
-<div id="confirmation-box" class="confirmation-box">
-    <p id="confirmation-message"></p>
-    <button class="btn btn-accept" onclick="updateStatus()">Confirm</button>
-    <button class="btn btn-reject" onclick="hideConfirmation()">Cancel</button>
-</div>
-
-<!-- Back Button (Top) -->
-<a href="javascript:history.back()" class="btn-back"><i class="fa fa-arrow-left"></i> Back</a>
-
-<div class="container">
-    <h2>My Bookings</h2>
-
-    {% for booking in bookings %}
-        <div class="booking-card">
-            <img src="{{ booking.user.profile_picture.url }}" alt="User Image" class="user-image">
-            <div class="details">
-                <p><strong>Name:</strong> {{ booking.user.username }}</p>
-                <p><strong>Service:</strong> {{ booking.service.service_name }}</p>
-                <p><strong>Expected Date:</strong> {{ booking.expected_date }}</p>
-                <p><strong>Address:</strong> {{ booking.user.state }}, {{ booking.user.district }}, {{ booking.user.place }}, {{ booking.user.housename }}</p>
-                <p><strong>Email:</strong> {{ booking.user.email }}</p>
-                <div id="status-container-{{ booking.id }}">
-                    <button class="btn-status {{ booking.status }}">{{ booking.status }}</button>
+    <div class="main-container">
+    <div id="overlay" class="overlay" onclick="hideConfirmation()"></div>
+    <div id="confirmation-box" class="confirmation-box">
+        <p id="confirmation-message"></p>
+        <button class="btn btn-accept" onclick="updateStatus()">Confirm</button>
+        <button class="btn btn-reject" onclick="hideConfirmation()">Cancel</button>
+    </div>
+    <div class="container">
+        <h2>My Bookings</h2>
+        <div class="booking-grid">
+            {% for booking in bookings|dictsortreversed:"id" %}
+                <div class="booking-card">
+                    <div class="bookid">
+                        <p>Booking ID : {{ booking.booking_id }}</p>
+                    </div>
+                    <div class="profile-image-container">
+                        <img src="{{ booking.user.profile_picture.url }}" alt="User Image" class="user-image">
+                    </div>
+                    <div class="details">
+                        <table>
+                            <tr><th>Name</th><td>{{ booking.user.first_name }} {{ booking.user.last_name }}</td></tr>
+                            <tr><th>Service</th><td>{{ booking.service.service_name }}</td></tr>
+                            <tr><th>Expected Date</th><td>{{ booking.expected_date }}</td></tr>
+                            <tr><th>Address</th><td>{{ booking.user.state }}, {{ booking.user.district }}, {{ booking.user.place }}, {{ booking.user.housename }}</td></tr>
+                            <tr><th>Email</th><td>{{ booking.user.email }}</td></tr>
+                        </table>
+                        <div id="status-container-{{ booking.id }}">
+                            <button class="btn-status {{ booking.status }}">{{ booking.status }}</button>
+                        </div>
+                        {% if booking.status == "pending" %}
+                            <div id="buttons-{{ booking.id }}" class="btn-container">
+                                <button class="btn btn-accept" onclick="showConfirmation({{ booking.id }}, 'accepted')">Accept</button>
+                                <button class="btn btn-reject" onclick="showConfirmation({{ booking.id }}, 'rejected')">Reject</button>
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
-            </div>
-            {% if booking.status == "pending" %}
-                <div id="buttons-{{ booking.id }}">
-                    <button class="btn btn-accept" onclick="showConfirmation({{ booking.id }}, 'accepted')">Accept</button>
-                    <button class="btn btn-reject" onclick="showConfirmation({{ booking.id }}, 'rejected')">Reject</button>
-                </div>
-            {% endif %}
+            {% empty %}
+                <p>No bookings found.</p>
+            {% endfor %}
         </div>
-    {% empty %}
-        <p>No bookings found.</p>
-    {% endfor %}
+    </div>
 </div>
-
-<!-- Back Button (Bottom) -->
-<a href="javascript:history.back()" class="btn-back"><i class="fa fa-arrow-left"></i> Back</a>
-
 </body>
 </html>

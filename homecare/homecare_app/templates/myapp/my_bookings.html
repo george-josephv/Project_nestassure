@@ -265,47 +265,46 @@
     {% endif %}
 </div>
 <script>
-function applyFilters() {
-    let searchName = document.getElementById("search-name").value.toLowerCase();
-    let selectedService = document.getElementById("service-filter").value;
-    let selectedDate = document.getElementById("date-filter").value;
-    let selectedStatus = document.getElementById("status-filter").value;
+    function applyFilters() {
+        let searchName = document.getElementById("search-name").value.toLowerCase();
+        let selectedService = document.getElementById("service-filter").value;
+        let selectedDate = document.getElementById("date-filter").value;
+        let selectedStatus = document.getElementById("status-filter").value.toLowerCase();
 
-    let rows = document.querySelectorAll("tbody tr");
-
-    rows.forEach(row => {
-        let workerName = row.cells[0].innerText.toLowerCase();
-        let service = row.cells[1].innerText;
-        let expectedDate = row.cells[2].innerText;
-        let status = row.cells[3].innerText.toLowerCase();
-
-        let nameMatch = workerName.includes(searchName);
-        let serviceMatch = selectedService === "" || service === selectedService;
-        let dateMatch = selectedDate === "" || expectedDate === selectedDate;
-        let statusMatch = selectedStatus === "" || status.includes(selectedStatus);
-
-        if (nameMatch && serviceMatch && dateMatch && statusMatch) {
-            row.style.display = "";
-        } else {
-            row.style.display = "none";
-        }
-    });
-}
-
-    document.getElementById("search-name").addEventListener("keyup", function () {
-        let input = this.value.toLowerCase();
         let rows = document.querySelectorAll("tbody tr");
 
         rows.forEach(row => {
-            let workerName = row.cells[0].textContent.toLowerCase();
-            if (workerName.startsWith(input)) {
+            let workerName = row.cells[0].innerText.toLowerCase();
+            let service = row.cells[1].innerText;
+            let expectedDate = row.cells[2].innerText;
+            let status = row.cells[3].innerText.toLowerCase();
+
+            let nameMatch = workerName.startsWith(searchName);
+            let serviceMatch = selectedService === "" || service === selectedService;
+
+            let dateMatch = true;
+            if (selectedDate) {
+                let rowDate = new Date(expectedDate);
+                let filterDate = new Date(selectedDate);
+                dateMatch = rowDate.toDateString() === filterDate.toDateString();
+            }
+
+            let statusMatch = selectedStatus === "" || status.includes(selectedStatus);
+
+            if (nameMatch && serviceMatch && dateMatch && statusMatch) {
                 row.style.display = "";
             } else {
                 row.style.display = "none";
             }
         });
-    });
+    }
+
+    document.getElementById("search-name").addEventListener("keyup", applyFilters);
+    document.getElementById("service-filter").addEventListener("change", applyFilters);
+    document.getElementById("date-filter").addEventListener("input", applyFilters);
+    document.getElementById("status-filter").addEventListener("change", applyFilters);
 </script>
+
 
 </body>
 </html>

@@ -11,7 +11,8 @@ from decimal import Decimal
 from django.utils.timezone import now
 
 def landing_page(request):
-    return render(request, 'myapp/landingpage.html')
+    services = Service.objects.all()
+    return render(request, 'myapp/landingpage.html', {'services': services})
 
 def login_view(request):
     if request.method == "POST":

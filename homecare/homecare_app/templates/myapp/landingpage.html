@@ -176,107 +176,196 @@
                 </div>
             </div>
         </section>
-        <!-- Portfolio Grid-->
-        <section class="page-section bg-light" id="portfolio">
-            <div class="container">
-                <div class="text-center">
-                    <h2 class="section-heading text-uppercase">Portfolio</h2>
-                    <h3 class="section-subheading text-muted">Lorem ipsum dolor sit amet consectetur.</h3>
+        
+        <!-- Services Section -->
+
+        <!-- Services Section -->
+<section class="page-section bg-light" id="services">
+    <div class="container">
+        <div class="text-center">
+            <h2 class="section-heading text-uppercase">Our Services</h2>
+            <h3 class="section-subheading text-muted">Explore the services we offer</h3>
+        </div>
+        <div class="row">
+            {% for service in services|slice:":6" %}  {# Show only first 6 services #}
+            <div class="col-lg-4 col-sm-6 mb-4">
+                <div class="flip-card-container">
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+                            <!-- Front Side (Image) -->
+                            <div class="flip-card-front">
+                                <img src="{% static 'myapp/images/' %}{{ service.service_name|lower }}.jpg" alt="{{ service.service_name }}" class="service-img">
+                            </div>
+                            <!-- Back Side (Description) -->
+                            <div class="flip-card-back">
+                                <h4 class="description-heading">Description</h4>
+                                <p class="service-description">{{ service.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Service Name (Always Visible Below the Card) -->
+                    <h4 class="service-name">{{ service.service_name }}</h4>
                 </div>
-                <div class="row">
-                    <div class="col-lg-4 col-sm-6 mb-4">
-                        <!-- Portfolio item 1-->
-                        <div class="portfolio-item">
-                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal1">
-                                <div class="portfolio-hover">
-                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>
-                                </div>
-                                <img class="img-fluid" src="{% static 'myapp/assets/img/portfolio/1.jpg' %}" alt="..." />
-                            </a>
-                            <div class="portfolio-caption">
-                                <div class="portfolio-caption-heading">Threads</div>
-                                <div class="portfolio-caption-subheading text-muted">Illustration</div>
-                            </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+
+        <!-- Hidden Services (Initially Hidden) -->
+        <div class="row" id="more-services" style="display: none;">
+            {% for service in services|slice:"6:" %} {# Show services after the first 6 #}
+            <div class="col-lg-4 col-sm-6 mb-4">
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <!-- Front Side (Image & Service Name) -->
+                        <div class="flip-card-front">
+                            <img src="{% static 'myapp/images/' %}{{ service.service_name|lower }}.jpg" alt="{{ service.service_name }}" class="service-img">
+                            <h4 class="service-name">{{ service.service_name }}</h4>
                         </div>
-                    </div>
-                    <div class="col-lg-4 col-sm-6 mb-4">
-                        <!-- Portfolio item 2-->
-                        <div class="portfolio-item">
-                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal2">
-                                <div class="portfolio-hover">
-                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>
-                                </div>
-                                <img class="img-fluid" src="{% static 'myapp/assets/img/portfolio/2.jpg' %}" alt="..." />
-                            </a>
-                            <div class="portfolio-caption">
-                                <div class="portfolio-caption-heading">Explore</div>
-                                <div class="portfolio-caption-subheading text-muted">Graphic Design</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-sm-6 mb-4">
-                        <!-- Portfolio item 3-->
-                        <div class="portfolio-item">
-                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal3">
-                                <div class="portfolio-hover">
-                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>
-                                </div>
-                                <img class="img-fluid" src="{% static 'myapp/assets/img/portfolio/3.jpg' %}" alt="..." />
-                            </a>
-                            <div class="portfolio-caption">
-                                <div class="portfolio-caption-heading">Finish</div>
-                                <div class="portfolio-caption-subheading text-muted">Identity</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-sm-6 mb-4 mb-lg-0">
-                        <!-- Portfolio item 4-->
-                        <div class="portfolio-item">
-                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal4">
-                                <div class="portfolio-hover">
-                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>
-                                </div>
-                                <img class="img-fluid" src="{% static 'myapp/assets/img/portfolio/4.jpg' %}" alt="..." />
-                            </a>
-                            <div class="portfolio-caption">
-                                <div class="portfolio-caption-heading">Lines</div>
-                                <div class="portfolio-caption-subheading text-muted">Branding</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-sm-6 mb-4 mb-sm-0">
-                        <!-- Portfolio item 5-->
-                        <div class="portfolio-item">
-                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal5">
-                                <div class="portfolio-hover">
-                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>
-                                </div>
-                                <img class="img-fluid" src="{% static 'myapp/assets/img/portfolio/5.jpg' %}" alt="..." />
-                            </a>
-                            <div class="portfolio-caption">
-                                <div class="portfolio-caption-heading">Southwest</div>
-                                <div class="portfolio-caption-subheading text-muted">Website Design</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-sm-6">
-                        <!-- Portfolio item 6-->
-                        <div class="portfolio-item">
-                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal6">
-                                <div class="portfolio-hover">
-                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>
-                                </div>
-                                <img class="img-fluid" src="{% static 'myapp/assets/img/portfolio/6.jpg' %}" alt="..." />
-                            </a>
-                            <div class="portfolio-caption">
-                                <div class="portfolio-caption-heading">Window</div>
-                                <div class="portfolio-caption-subheading text-muted">Photography</div>
-                            </div>
+                        <!-- Back Side (Description) -->
+                        <div class="flip-card-back">
+                            <h4 class="description-heading">Description</h4>
+                            <p class="service-description">{{ service.description }}</p>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+            {% endfor %}
+        </div>
+
+        <!-- Show More / Show Less Button -->
+        {% if services|length > 6 %}
+        <div class="text-center mt-4">
+            <button class="btn btn-primary" id="toggle-services">Show More</button>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- jQuery for Show More / Show Less Effect -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#toggle-services").click(function () {
+            $("#more-services").slideToggle(500);
+            if ($(this).text() === "Show More") {
+                $(this).text("Show Less");
+            } else {
+                $(this).text("Show More");
+            }
+        });
+    });
+</script>
+
+<!-- Custom Styles -->
+<style>
+     /* Flip Card Container */
+.flip-card-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 40px; /* More spacing between cards */
+}
+
+/* Flip Card */
+.flip-card {
+    background: transparent;
+    width: 100%;
+    height: 400px; /* Increased height for better image spacing */
+    perspective: 1000px;
+}
+
+/* Flip Card Inner */
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+/* Flip on Hover */
+.flip-card:hover .flip-card-inner {
+    transform: rotateY(180deg);
+}
+
+/* Front & Back Side */
+.flip-card-front,
+.flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Front Side */
+.flip-card-front {
+    background: white;
+}
+
+.flip-card-front .service-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+/* Back Side */
+.flip-card-back {
+    background: #2c003e; /* Dark Purple */
+    color: white;
+    transform: rotateY(180deg);
+    padding: 20px;
+    border-radius: 12px;
+}
+
+/* Service Description */
+.description-heading {
+    color: #ffcc00; /* Dark Yellow */
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.service-description {
+    color: white;
+    font-size: 1rem;
+    text-align: center;
+    padding: 0 15px;
+}
+
+/* Service Name (Always Visible) */
+.service-name {
+    margin-top: 10px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    text-align: center;
+    color: black;
+}
+
+/* Row Spacing */
+.row {
+    margin-bottom: 30px; /* More spacing between rows */
+}
+
+/* Show More Button */
+#toggle-services {
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    border-radius: 25px;
+    margin-top: 10px;
+}
+
+</style>
+
+
         <!-- About-->
         <!-- About Section -->
 <section class="page-section bg-light" id="about">

@@ -49,7 +49,7 @@ def worker_logout(request):
     logout(request)
     return render(request, 'myapp/landingpage.html')
 
-@login_required
+
 def signup_view(request):
     if request.method == "POST":
         username = request.POST.get("username")

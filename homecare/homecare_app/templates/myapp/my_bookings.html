@@ -8,13 +8,30 @@
     <style>
         /* General Styling */
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            height: 100%;
             margin: 0;
-            padding: 20px;
+            scroll-behavior: smooth;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
         }
-
-        .container {
+        .mainbody{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            padding: 20px;
+            margin-top: 80px;
+        }
+        .page-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+        .containero {
+            position: relative;
             max-width: 900px;
             margin: auto;
             background: white;
@@ -42,27 +59,27 @@
         }
 
         .task-header {
-            background-color: black;
+            background-color: #212529e8;
             color: white;
         }
 
         .assigned-header {
-            background-color: teal;
+            background-color: #212529e8;
             color: white;
         }
 
         .date-header {
-            background-color: orange;
+            background-color:#212529e8;
             color: white;
         }
 
         .status-header {
-            background-color: red;
+            background-color: #212529e8;
             color: white;
         }
 
         .action-header {
-            background-color: purple;
+            background-color: #212529e8;
             color: white;
         }
 
@@ -153,7 +170,7 @@
 /* Filter Button */
 .filter-button {
     padding: 10px 15px;
-    background-color: rgb(23, 70, 121);
+    background-color: #E0C200;
     color: white;
     border: none;
     border-radius: 5px;
@@ -163,8 +180,34 @@
 }
 
 .filter-button:hover {
-    background-color: rgb(15, 50, 90);
+    background-color: #fade2a;
 }
+.footer-section {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 4px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+       
+    .close-button {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 20px;
+        color: black;
+        text-decoration: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        margin-right: 10px;
+    }
+
+    .close-button:hover {
+        color: rgb(255, 179, 0);
+    }
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -178,10 +221,19 @@
 </head>
 <body>
 
-
-<div class="container">
+    <div class="page-wrapper">
+        <!-- Logo Section -->
+        {% include 'user_dashmenu.html' %}
+ <section class="mainbody">
+<div class="containero">
+    <a href="{% url 'user_dashboard' %}" class="close-button">
+        <i class="fas fa-arrow-left"></i>
+    </a>
     <h2>My Bookings</h2>
-    <!-- Filter Section -->
+
+  
+   
+
 <!-- Filter Section -->
 <div class="filter-container">
     <input type="text" id="search-name" class="search-input" placeholder="Search by Worker Name">
@@ -304,7 +356,11 @@
     document.getElementById("date-filter").addEventListener("input", applyFilters);
     document.getElementById("status-filter").addEventListener("change", applyFilters);
 </script>
-
+ </section>
+ <section class="footer-section">
+    {% include 'footer.html' %}
+</section>
+</div>
 
 </body>
 </html>

@@ -157,6 +157,58 @@
                 padding: 6px 10px;
             }
         }
+        .filter {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            max-width: 800px;
+            margin: auto;
+            margin-bottom:25px;
+        }
+    
+        .filter input,
+        .filter select {
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+    
+        .filter input:focus,
+        .filter select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+    
+        .filter input[type="text"] {
+            flex: 1;
+            min-width: 220px;
+        }
+    
+        .filter input[type="date"],
+        .filter select {
+            min-width: 160px;
+        }
+    
+        @media (max-width: 768px) {
+            .filter {
+                flex-direction: column;
+                align-items: stretch;
+            }
+    
+            .filter input,
+            .filter select {
+                width: 100%;
+            }
+        }
 
     </style>
     <script>
@@ -211,8 +263,58 @@
         <button class="btn btn-accept" onclick="updateStatus()">Confirm</button>
         <button class="btn btn-reject" onclick="hideConfirmation()">Cancel</button>
     </div>
+    <a href="{% url 'worker_dashboard' %}" style="position: absolute; right: 20px; top: 20px; text-decoration: none; font-size: 20px; color: #333;">
+        <i class="fas fa-arrow-left"></i>
+    </a>
     <div class="container">
-        <h2>My Bookings</h2>
+        <h2>BOOKING REQUIST</h2>
+    
+        <div class="filter">
+            {% comment %} filter start {% endcomment %}
+        
+            <form method="GET" id="filterForm">
+                <input type="text" name="search" placeholder="Search by Booking ID or Name" value="{{ request.GET.search }}" id="searchInput">
+                
+                <input type="date" name="expected_date" value="{{ request.GET.expected_date }}" onchange="submitForm()">
+            
+                <select name="service" onchange="submitForm()">
+                    <option value="">All Services</option>
+                    {% for service in services %}
+                        <option value="{{ service.id }}" {% if request.GET.service == service.id|stringformat:"s" %}selected{% endif %}>
+                            {{ service.service_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            
+                <select name="status" onchange="submitForm()">
+                    <option value="">All Status</option>
+                    <option value="pending" {% if request.GET.status == "pending" %}selected{% endif %}>Pending</option>
+                    <option value="accepted" {% if request.GET.status == "accepted" %}selected{% endif %}>Accepted</option>
+                    <option value="rejected" {% if request.GET.status == "rejected" %}selected{% endif %}>Rejected</option>
+                    <option value="completed" {% if request.GET.status == "completed" %}selected{% endif %}>Completed</option>
+                </select>
+            </form>
+        
+            <script>
+                let typingTimer;
+                const searchInput = document.getElementById("searchInput");
+        
+                searchInput.addEventListener("input", function () {
+                    clearTimeout(typingTimer);
+                    typingTimer = setTimeout(() => {
+                        submitForm();
+                    }, 500);  // Waits for 500ms before submitting
+                });
+        
+                function submitForm() {
+                    document.getElementById("filterForm").submit();
+                }
+            </script>
+        
+            {% comment %} filter end {% endcomment %}
+        </div>
+        {% comment %} filter end {% endcomment %}
+        
         <div class="booking-grid">
             {% for booking in bookings|dictsortreversed:"id" %}
                 <div class="booking-card">

@@ -9,9 +9,13 @@ from datetime import date
 from django.http import JsonResponse
 from decimal import Decimal
 from django.utils.timezone import now
+from django.db.models import Q
+
+
 
 def landing_page(request):
-    return render(request, 'myapp/landingpage.html')
+    services = Service.objects.all()
+    return render(request, 'myapp/landingpage.html', {'services': services})
 
 def login_view(request):
     if request.method == "POST":
@@ -125,7 +129,7 @@ def book_worker(request, worker_id, service):
         "booking_service_id": service.id  # Added booking_service_id to context
     })
 @login_required
-# today updates
+# 6 march
 def my_bookings(request):
     bookings = Booking.objects.filter(user=request.user)
     services = Service.objects.all()  # Fetch all services
@@ -162,19 +166,50 @@ def edit_user_profile(request):
         form = EditProfileForm(instance=request.user)
 
     return render(request, 'myapp/edit_user_profile.html', {'form': form})
+# filter date 7 march 
 
 @login_required
 def worker_booking_list_view(request):
     worker = get_object_or_404(Worker, user=request.user)
     bookings = Booking.objects.filter(worker=worker).order_by('-id')
 
-    accepted_dates = list(Booking.objects.filter(worker=worker, status="accepted").values_list("expected_date", flat=True))
+    # Get only the services assigned to the logged-in worker
+    services = worker.services.all()
+
+    # Get filter parameters from the request
+    search_query = request.GET.get('search', '')
+    expected_date = request.GET.get('expected_date', '')
+    service_id = request.GET.get('service', '')
+    status = request.GET.get('status', '')
+
+    # Apply filters
+    if search_query:
+        bookings = bookings.filter(
+            Q(booking_id__icontains=search_query) |
+            Q(user__first_name__icontains=search_query) |
+            Q(user__last_name__icontains=search_query)
+        )
+
+    if expected_date:
+        bookings = bookings.filter(expected_date=expected_date)
+
+    # Ensure the service filter only includes services provided by the worker
+    if service_id and services.filter(id=service_id).exists():
+        bookings = bookings.filter(service_id=service_id)
+
+    if status:
+        bookings = bookings.filter(status=status)
+
+    accepted_dates = list(bookings.filter(status="accepted").values_list("expected_date", flat=True))
 
     return render(request, 'myapp/worker_booking_list_view.html', {
         'bookings': bookings,
-        'accepted_dates': accepted_dates
+        'accepted_dates': accepted_dates,
+        'services': services,  # Now only showing worker-specific services
     })
 
+
+# ========
 @login_required
 def update_booking_status(request, booking_id, status):
     if request.method == "POST":

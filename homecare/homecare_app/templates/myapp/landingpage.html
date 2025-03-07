@@ -23,7 +23,7 @@
     <div class="container d-flex justify-content-between align-items-center">
         <!-- Left Side: Logo -->
         <a class="navbar-brand" href="#">
-            <img src="{% static 'myapp/assets/img/navbar-logo.svg' %}" alt="Logo" height="40">
+            <!-- <img src="{% static 'myapp/assets/img/navbar-logo.svg' %}" alt="Logo" height="40"> -->
         </a>
         
         <!-- Right Side: Menu Button -->
@@ -134,13 +134,15 @@
 
 
         <!-- Masthead-->
-        <header class="masthead" id="home">
-            <div class="container">
-                <div class="masthead-subheading">"Where Love and Comfort Endure!"</div>
-                <div class="masthead-heading text-uppercase">Seamless Care, Trusted Comfort.</div>
-                <a class="btn btn-primary btn-xl text-uppercase" href="#services">Let's Go</a>
-            </div>
-        </header>
+        {% load static %}
+<header class="masthead" id="home" style="background-image: url('{% static "myapp/images/mainphoto.jpg" %}') !important;">
+    <div class="container">
+        <div class="masthead-subheading">"Where Love and Comfort Endure!"</div>
+        <div class="masthead-heading text-uppercase">Seamless Care, Trusted Comfort.</div>
+        <a class="btn btn-primary btn-xl text-uppercase" href="#services">Let's Go</a>
+    </div>
+</header>
+
         
 
         <!-- Why Choose Us (Using id="services" for CSS compatibility) -->

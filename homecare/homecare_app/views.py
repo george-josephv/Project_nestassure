@@ -53,7 +53,7 @@ def worker_logout(request):
     logout(request)
     return redirect("landing")  # Redirect instead of render
 
-@login_required
+
 def signup_view(request):
     if request.method == "POST":
         username = request.POST.get("username")

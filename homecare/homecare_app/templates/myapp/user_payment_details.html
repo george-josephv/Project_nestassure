@@ -1,44 +1,108 @@
 {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Details</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 
-{% block content %}
-<div class="container mt-4">
-    <h2 class="text-center">Payment Details</h2>
-    <div class="card p-4 shadow-sm">
-        <p><strong>Booking ID:</strong> {{ payment.booking.booking_id }}</p>
-        <p><strong>Service Booked:</strong> {{ service_booked }}</p>
-        <p><strong>Worker Name:</strong> {{ worker_name }}</p>
-        <p><strong>Worker Email:</strong> {{ worker_email }}</p>
-        <p><strong>Address:</strong> {{ address }}</p>
-        <p><strong>Expected Date:</strong> {{ expected_date }}</p>
-        <p><strong>Work Status:</strong> {{ work_status }}</p>
-        <p><strong>Rate Per Hour:</strong> ₹{{ rate_per_hour }}</p>
-        <p><strong>Total Time:</strong> {{ total_time }}</p>
-        <p><strong>Total Amount:</strong> ₹{{ total_amount }}</p>
+    <style>
+        /* General Styling */
+        body, html {
+            height: 100%;
+            margin: 0;
+            scroll-behavior: smooth;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
 
-        {% if is_paid %}
-            <p class="text-success"><strong>Payment Status:</strong> Paid</p>
-        {% else %}
-            <p class="text-danger"><strong>Payment Status:</strong> Pending</p>
-            <button class="btn btn-primary" onclick="showPaymentPopup()">Go to Pay</button>
-        {% endif %}
-    </div>
-</div>
 
-<!-- Blurred Background Overlay -->
-<div class="modal-overlay" id="modalOverlay"></div>
+        .page-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
 
-<!-- Payment Popup -->
-<div class="modal" id="paymentPopup">
-    <h4>Payment Information</h4>
-    <p class="payment-details">Your total amount is <strong>₹{{ total_amount }}</strong></p>
-    <img src="{% static 'images/qr_code.jpg' %}" alt="QR Code" class="qr-code">
-    <p><strong>Bank Account:</strong> SBI - 1234567890</p>
-    <button onclick="confirmPayment()">OK</button>
-</div>
 
-<style>
-/* Blurred background overlay */
-.modal-overlay {
+        .invoice-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .header-section strong {
+            font-weight: bold;
+        }
+        .divider {
+            border-top: 1px solid #ddd;
+            margin: 10px 0;
+        }
+        h3 {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        p {
+            font-size: 16px;
+            margin-bottom: 10px; /* Added spacing */
+        }
+        .table {
+            margin-top: 10px;
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .table th, .table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        .summary-table {
+            margin-top: 45px;
+        }
+        .summary-table td {
+            font-weight: bold;
+        }
+        .btn-pay {
+            background: #fade2a;
+            color: black;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+        .btn-pay:hover {
+            background: #e0c622;
+            transform: scale(1.03);
+        }
+        .Pending {
+            color: red;
+        }
+        .paid {
+            color: #007bff;
+        }
+        .workerinfo {
+            padding: 2px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        .modal-overlay {
     display: none;
     position: fixed;
     top: 0;
@@ -48,15 +112,13 @@
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(5px);
     z-index: 999;
+    justify-content: center;
+    align-items: center;
 }
 
-/* Centered modal with rounded edges and shadow */
+/* Modal Popup */
 .modal {
     display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     background: white;
     padding: 20px;
     border-radius: 12px;
@@ -65,26 +127,45 @@
     z-index: 1000;
     max-width: 400px;
     width: 90%;
+    
+    /* Ensuring proper alignment */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
-/* QR Code Styling */
-.qr-code {
-    width: 200px;
-    height: 200px;
+/* QR Code Container */
+.qr-code-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin: 15px 0;
+}
+
+/* QR Code */
+.qr-code {
+    max-width: 80%;
+    height: auto;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Payment details text */
-.payment-details {
-    font-size: 18px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 15px;
+/* Close Button */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 50%;
 }
 
-/* Payment button */
+/* Payment Button */
 .modal button {
     padding: 10px 15px;
     background: #007bff;
@@ -94,33 +175,141 @@
     cursor: pointer;
     font-size: 16px;
     transition: 0.3s;
+    margin-top: 10px;
 }
 
 .modal button:hover {
     background: #0056b3;
 }
-</style>
-
-<script>
-function showPaymentPopup() {
-    document.getElementById("modalOverlay").style.display = "block";
-    document.getElementById("paymentPopup").style.display = "block";
-}
-
-function confirmPayment() {
-    fetch("{% url 'mark_payment_done' booking_id=booking_id %}", {
-        method: "POST",
-        headers: { "X-CSRFToken": "{{ csrf_token }}" }
-    }).then(response => response.json())
-    .then(data => {
-        if (data.message === "Payment marked as done") {
-            alert("Payment Successful!");
-            location.reload();
+        .footer-section {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 4px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
         }
-    });
 
-    document.getElementById("modalOverlay").style.display = "none";
-    document.getElementById("paymentPopup").style.display = "none";
-}
-</script>
+    </style>
+
+    <script>
+        function showPaymentPopup() {
+            document.getElementById("modalOverlay").style.display = "flex";
+            document.getElementById("paymentPopup").style.display = "flex";
+        }
+
+        function confirmPayment() {
+            fetch("{% url 'mark_payment_done' booking_id=booking_id %}", {
+                method: "POST",
+                headers: { "X-CSRFToken": "{{ csrf_token }}" }
+            }).then(response => response.json())
+            .then(data => {
+                if (data.message === "Payment marked as done") {
+                    alert("Payment Successful!");
+                    location.reload();
+                }
+            });
+
+            document.getElementById("modalOverlay").style.display = "none";
+            document.getElementById("paymentPopup").style.display = "none";
+        }
+    </script>
+</head>
+<body>
+
+{% block content %}
+
+<div class="page-wrapper">
+    <!-- Logo Section -->
+    {% include 'user_dashmenu.html' %}
+
+    <section class="payment-section">
+<div class="container mt-4">
+    <!-- <h2 class="text-center">Payment Details</h2> -->
+    <div class="invoice-container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <div>{{ expected_date }}</div>
+            {% if is_paid %}
+                <div><strong>Payment Status:</strong> <span class="paid">Paid</span></div>
+            {% else %}
+                <div><strong>Payment Status:</strong> <span class="Pending">Pending</span></div>
+            {% endif %}
+        </div>
+        <div><strong>Booking ID:</strong> {{ payment.booking.booking_id }}</div>
+
+        <div class="divider"></div>
+
+        <!-- Worker Info Section -->
+        <div class="workerinfo">
+            <h3>Worker Info</h3>
+            <p><strong>Service:</strong> {{ service_booked }}</p>
+            <p><strong>Worker Name:</strong> {{ worker_name }}</p>
+            <p><strong>Worker Email:</strong> {{ worker_email }}</p>
+            <p><strong>Address:</strong> {{ address }}</p>
+            <p><strong>Date of Work:</strong> {{ expected_date }}</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Table Section -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>DESCRIPTION</th>
+                    <th>PRICE/HR</th>
+                    <th>WORKING TIME</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ service_booked }}</td>
+                    <td>₹{{ rate_per_hour }}</td>
+                    <td>{{ total_time }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Summary Section -->
+        <table class="table summary-table">
+            <tr>
+                <td>SUB TOTAL</td>
+                <td>TAX</td>
+                <td>TOTAL</td>
+            </tr>
+            <tr>
+                <td>₹{{ total_amount }}</td>
+                <td>₹0</td>
+                <td>₹{{ total_amount }}</td>
+            </tr>
+        </table>
+
+        <!-- Payment Button -->
+        {% if not is_paid %}
+            <button class="btn-pay" onclick="showPaymentPopup()">Go TO Pay</button>
+        {% endif %}
+    </div>
+</div>
+</section>
+
+<section class="footer-section">
+    {% include 'footer.html' %}
+</section>
+
+<!-- Payment Popup -->
+<div class="" id="modalOverlay">
+    <div class="modal" id="paymentPopup">
+        <h4>Payment Information</h4>
+        <p class="payment-details">Your total amount is <strong>₹{{ total_amount }}</strong></p>
+        <div class="qr-code-container">
+            <img src="{% static 'myapp/assets/img/qr_code.jpg' %}" alt="QR Code" class="qr-code">
+        </div>
+        <p><strong>Bank Account:</strong> SBI - 1234567890</p>
+        <button onclick="confirmPayment()">OK</button>
+    </div>
+</div>
+</div>
+
 {% endblock %}
+</body>
+</html>

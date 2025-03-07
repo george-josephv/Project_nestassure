@@ -5,60 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Processing</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            text-align: center;
-            padding: 20px;
+        body, html {
+            height: 100%;
+            margin: 0;
+            scroll-behavior: smooth;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
         }
-        .container {
-            max-width: 700px;
+        .page-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+
+        .maincontainer {
+            max-width: 900px;
             margin: auto;
             background: white;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(27, 26, 26, 0.1);
         }
         .top-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+
+.btns:hover {
+    color: #333;
+    
+}
+        
+        .btns i {
+            margin-right: 5px;
         }
-        .btn {
-            padding: 10px 15px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
         }
-        .btn:hover {
-            background: #0056b3;
-        }
-        .booking-card {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px;
+        th, td {
+            padding: 12px;
             border-bottom: 1px solid #ddd;
-        }
-        .booking-card:last-child {
-            border-bottom: none;
-        }
-        .user-image {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            margin-right: 15px;
-            object-fit: cover;
-        }
-        .details {
             text-align: left;
-            flex-grow: 1;
+            font-size: 16px;
+        }
+        th {
+            background: #252323b4;
+            color: aliceblue;
         }
         .status-paid {
             color: green;
@@ -68,44 +71,134 @@
             color: orange;
             font-weight: bold;
         }
+        tbody tr {
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        tbody tr:hover {
+            background: #ede84dba;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .btn back-btn {
+            margin-top: 20px;
+        }
+        .footer-section {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 4px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            .maincontainer {
+                width: 95%;
+                padding: 15px;
+            }
+            .top-buttons {
+                flex-direction: row;
+                gap: 10px;
+            }
+            table {
+                font-size: 14px;
+            }
+            .btn {
+                font-size: 14px;
+                padding: 8px 12px;
+            }
+        }
+        @media screen and (max-width: 480px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            thead {
+                display: none;
+            }
+            tr {
+                margin-bottom: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                padding: 10px;
+                background: ;
+            }
+            td {
+                display: flex;
+                justify-content: space-between;
+                padding: 8px;
+                border-bottom: 1px solid #ddd;
+            }
+            td:last-child {
+                border-bottom: none;
+            }
+            td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                color: #333;
+            }
+        }
     </style>
+
+    <script>
+        function redirectToDetails(url) {
+            window.location.href = url;
+        }
+    </script>
 </head>
 <body>
+    <div class="page-wrapper">
+        <!-- Logo Section -->
+        {% include 'user_dashmenu.html' %}
 
-    <div class="container">
+        <section class="paymentsections">
+    <div class="maincontainer">
         <div class="top-buttons">
-            <h2>Payment Processing Workers</h2>
-            <a href="{% url 'payment_history' %}" class="btn">Payment History</a>
+            <a href="{% url 'payment_history' %}" class="btns">
+                <i class="fas fa-history"></i> Payment History
+            </a>
+            <a href="{% url 'user_dashboard' %}" class="btns back-btn">
+                <i class="fa fa-arrow-left"></i>
+            </a>
         </div>
-    
-        {% for booking in processing_bookings %}
-            <div class="booking-card">
-                <img src="{{ booking.worker.user.profile_picture.url }}" alt="Worker Image" class="user-image">
-                <div class="details">
-                    <p><strong>Booking ID:</strong> {{ booking.booking_id }}</p>
-                    <p><strong>Worker Name:</strong> {{ booking.worker.user.username }}</p>
-                    <p><strong>Service:</strong> {{ booking.service.service_name }}</p>
-                    <p><strong>Expected Date:</strong> {{ booking.expected_date }}</p>
-                    <p><strong>Address:</strong> {{ booking.worker.user.state }}, {{ booking.worker.user.district }}, {{ booking.worker.user.place }}, {{ booking.worker.user.housename }}</p>
-                    <p><strong>Email:</strong> {{ booking.worker.user.email }}</p>
-                    <p><strong>Status:</strong> 
-                        {% if booking.payment.is_paid %}
-                            <span class="status-paid">Paid</span>
-                        {% else %}
-                            <span class="status-processing">Payment Processing</span>
-                        {% endif %}
-                    </p>
-                    <a href="{% url 'user_payment_details' booking.id %}" class="btn">Go to Details</a>
-                </div>
-            </div>
-        {% empty %}
-            <p>No workers with payment processing found.</p>
-        {% endfor %}
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Worker Name</th>
+                        <th>Booking ID</th>
+                        <th>Service</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in processing_bookings %}
+                    <tr onclick="redirectToDetails('{% url 'user_payment_details' booking.id %}')">
+
+                        <td data-label="Worker Name">{{ booking.worker.user.first_name }} {{ booking.worker.user.last_name }}</td>
+                        <td data-label="Booking ID">{{ booking.booking_id }}</td>
+                        <td data-label="Service">{{ booking.service.service_name }}</td>
+                        <td data-label="Status" class="{% if booking.payment.is_paid %}status-paid{% else %}status-processing{% endif %}">
+                            {% if booking.payment.is_paid %} Paid {% else %} Payment Processing {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" style="text-align:center;">No workers with payment processing found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-
-    <a href="{% url 'user_dashboard' %}" class="btn"><i class="fa fa-arrow-left"></i> Back</a>
-
-
-
+        </section>
+        
+        <section class="footer-section">
+            {% include 'footer.html' %}
+        </section>
+    
+    </div>
 </body>
 </html>

@@ -56,7 +56,7 @@
             <div class="history-card">
                 <p><strong>Booking ID:</strong> {{ payment.booking.booking_id }}</p>
                 <p><strong>Service:</strong> {{ payment.booking.service.service_name }}</p>
-                <p><strong>Worker Name:</strong> {{ payment.booking.worker.user.username }}</p>
+                <p><strong>Worker Name:</strong> {{ payment.booking.worker.user.first_name }} {{ payment.booking.worker.user.last_name }}</p>
                 <p><strong>Total Amount:</strong> ₹{{ payment.total_amount }}</p>
                 <p><strong>Paid On:</strong> {{ current_date|date:"F d, Y" }}</p>
                 <p><strong>Status:</strong> <span class="status-paid">Paid</span></p>

@@ -292,7 +292,7 @@ def user_payment_details(request, booking_id):
         'payment': payment,
         'booking_id': payment.booking.id,  # Default ID
         'service_booked': payment.booking.service.service_name,
-        'worker_name': payment.booking.worker.user.username,
+        'worker_name': f"{payment.booking.worker.user.first_name} {payment.booking.worker.user.last_name}",
         'worker_email': payment.booking.worker.user.email,
         'address': f"{payment.booking.user.state}, {payment.booking.user.district}, {payment.booking.user.place}, {payment.booking.user.housename}",
         'expected_date': payment.booking.expected_date,
@@ -317,8 +317,8 @@ def mark_payment_done(request, booking_id):
 
 @login_required
 def payment_history(request):
-    # Fetch payments only for the logged-in user
-    paid_payments = Payment.objects.filter(booking__user=request.user, is_paid=True).order_by('id')
+    # Fetch payments only for the logged-in user, ordered by latest first
+    paid_payments = Payment.objects.filter(booking__user=request.user, is_paid=True).order_by('-id')  
     current_date = now().date()
 
     # Redirect to "payment-processing/" if no paid payments exist for the logged-in user

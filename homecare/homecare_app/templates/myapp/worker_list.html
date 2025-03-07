@@ -149,7 +149,7 @@
                                 <img src="{% static 'myapp/images/default_worker.jpg' %}" alt="Default Worker">
                             {% endif %}
                             <div class="worker-info">
-                                <span>{{ worker.user.username|upper }}</span>
+                                <span>{{ worker.user.first_name|capfirst }} {{ worker.user.last_name|capfirst }}</span>
                                 <small><i class="fas fa-map-marker-alt"></i> District: {{ worker.user.district }}</small>
                                 <small><i class="fas fa-home"></i> Place: {{ worker.user.place }}</small>
                                 <small><i class="fas fa-envelope"></i> Email: {{ worker.user.email }}</small>

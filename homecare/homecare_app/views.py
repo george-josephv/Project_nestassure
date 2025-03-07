@@ -42,7 +42,7 @@ def user_dashboard(request):
 @login_required
 def user_logout(request):
     logout(request)
-    return render(request, 'myapp/landingpage.html')
+    return redirect("landing")  # Redirect instead of render
 
 @login_required
 def worker_dashboard(request):
@@ -51,7 +51,7 @@ def worker_dashboard(request):
 @login_required
 def worker_logout(request):
     logout(request)
-    return render(request, 'myapp/landingpage.html')
+    return redirect("landing")  # Redirect instead of render
 
 @login_required
 def signup_view(request):

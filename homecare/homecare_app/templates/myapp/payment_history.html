@@ -13,60 +13,126 @@
             padding: 20px;
         }
         .container {
-            max-width: 700px;
+            max-width: 900px;
             margin: auto;
             background: white;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+            position: relative;
         }
-        .history-card {
-            padding: 15px;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
+      
+        /* Back Button - Positioned to Top Right */
+        .btn-container {
+            text-align: right;
+            margin-bottom: 10px;
         }
-        .history-card:last-child {
-            border-bottom: none;
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #f8e222;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background: #000000;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            white-space: nowrap;
+        }
+        th {
+            background: #2d2f30;
+            color: white;
         }
         .status-paid {
             color: green;
             font-weight: bold;
         }
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background: #007bff;
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
-            margin-top: 15px;
+        
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            table {
+                width: 100%;
+                display: block;
+                overflow-x: auto;
+            }
+            th, td {
+                padding: 8px;
+                font-size: 14px;
+            }
+            .btn-container {
+                text-align: center; /* Center the button on small screens */
+            }
         }
-        .btn:hover {
-            background: #0056b3;
+
+        @media screen and (max-width: 480px) {
+            th, td {
+                padding: 6px;
+                font-size: 12px;
+            }
+            .btn {
+                padding: 8px 15px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
+        <!-- Button Positioned at Top Right -->
+        <div class="btn-container">
+            <a href="{% url 'user_payment_processing_list' %}" class="btn"><i class="fa fa-arrow-left"></i> Back to Payment Processing</a>
+        </div>
+
         <h2>Payment History</h2>
 
-        {% for payment in paid_payments %}
-            <div class="history-card">
-                <p><strong>Booking ID:</strong> {{ payment.booking.booking_id }}</p>
-                <p><strong>Service:</strong> {{ payment.booking.service.service_name }}</p>
-                <p><strong>Worker Name:</strong> {{ payment.booking.worker.user.first_name }} {{ payment.booking.worker.user.last_name }}</p>
-                <p><strong>Total Amount:</strong> ₹{{ payment.total_amount }}</p>
-                <p><strong>Paid On:</strong> {{ current_date|date:"F d, Y" }}</p>
-                <p><strong>Status:</strong> <span class="status-paid">Paid</span></p>
-            </div>
-        {% empty %}
+        {% if paid_payments %}
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Service</th>
+                        <th>Worker Name</th>
+                        <th>Total Amount</th>
+                        <th>Paid On</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payment in paid_payments %}
+                    <tr>
+                        <td>{{ payment.booking.booking_id }}</td>
+                        <td>{{ payment.booking.service.service_name }}</td>
+                        <td>{{ payment.booking.worker.user.first_name }} {{ payment.booking.worker.user.last_name }}</td>
+                        <td>₹{{ payment.total_amount }}</td>
+                        <td>{{ current_date|date:"F d, Y" }}</td>
+                        <td><span class="status-paid">Paid</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
             <p>No completed payments found.</p>
-        {% endfor %}
-
-        <!-- Button to manually go back -->
-        <a href="{% url 'user_payment_processing_list' %}" class="btn"><i class="fa fa-arrow-left"></i> Back to Payment Processing</a>
+        {% endif %}
     </div>
 
 </body>

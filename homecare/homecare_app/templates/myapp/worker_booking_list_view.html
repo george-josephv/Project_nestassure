@@ -7,26 +7,39 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            text-align: center;
-            padding: 20px;
+            height: 100%;
+            margin: 0;
+            scroll-behavior: smooth;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
         }
+
+        .page-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+
         .main-container {
         max-width: 100%;
         margin: 0 auto;
-       
         padding: 20px;
         border-radius: 10px;
        
     }
-        .container {
-            max-width: 1100px;
+        .containerr {
+            max-width: 1300px;
             margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+            position: relative;
         }
-        h2 {
-            margin-bottom: 20px;
-        }
+        
         .booking-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -74,12 +87,13 @@
             background: none;
             border: none;
         }
-        .btn-accept { background: green; color: white; }
-        .btn-reject { background: red; color: white; }
-        .btn-status { padding: 6px 12px; border-radius: 5px; color: white; font-weight: bold; }
-        .accepted { background: green; }
-        .rejected { background: red; }
-        .pending { background: orange; }
+        .booking-card .btn-accept { background: green !important; color: white !important; }
+.booking-card .btn-reject { background: red !important; color: white !important; }
+.booking-card .btn-status { padding: 6px 12px !important; border-radius: 5px !important; color: white !important; font-weight: bold !important; }
+.booking-card .accepted { background: green !important; }
+.booking-card .rejected { background: red !important; }
+.booking-card .pending { background: orange !important; }
+
 
         .confirmation-box {
             display: none;
@@ -158,10 +172,10 @@
             }
         }
         .filter {
-            background: #f8f9fa;
+            background: #ffffff;
             padding: 15px;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
@@ -197,7 +211,14 @@
         .filter select {
             min-width: 160px;
         }
-    
+        .footer-section {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 4px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
         @media (max-width: 768px) {
             .filter {
                 flex-direction: column;
@@ -256,6 +277,11 @@
     </script>
 </head>
 <body>
+    <div class="page-wrapper">
+        <!-- Logo Section -->
+        {% include 'worker_dashmenu.html' %}
+
+        <section class="bookinglist">
     <div class="main-container">
     <div id="overlay" class="overlay" onclick="hideConfirmation()"></div>
     <div id="confirmation-box" class="confirmation-box">
@@ -263,12 +289,16 @@
         <button class="btn btn-accept" onclick="updateStatus()">Confirm</button>
         <button class="btn btn-reject" onclick="hideConfirmation()">Cancel</button>
     </div>
-    <a href="{% url 'worker_dashboard' %}" style="position: absolute; right: 20px; top: 20px; text-decoration: none; font-size: 20px; color: #333;">
+    
+   
+    <h2 style="text-align: center;">BOOKING REQUIST</h2>
+
+    <div class="containerr">
+        <a href="{% url 'worker_dashboard' %}" 
+       style="position: absolute; right: 20px; top: 20px; 
+              text-decoration: none; font-size: 20px; color: #333;">
         <i class="fas fa-arrow-left"></i>
     </a>
-    <div class="container">
-        <h2>BOOKING REQUIST</h2>
-    
         <div class="filter">
             {% comment %} filter start {% endcomment %}
         
@@ -348,6 +378,13 @@
             {% endfor %}
         </div>
     </div>
+    </div>
+</section>
+<section class="footer-section">
+    {% include 'footer.html' %}
+</section>
 </div>
+
+
 </body>
 </html>

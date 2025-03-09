@@ -6,136 +6,183 @@
     <title>Accepted Bookings</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            text-align: center;
-            padding: 20px;
+        
+        body, html {
+            height: 100%;
+            margin: 0;
+            scroll-behavior: smooth;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
         }
-        .container {
-            max-width: 700px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        .page-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-y: auto;
         }
+            .containerr {
+                max-width: 1000px; 
+                margin: auto; 
+                background: white; 
+                padding: 20px; 
+                border-radius: 10px; 
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    width: 100%;
+}
+
         .booking-card {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-direction: column;
             padding: 15px;
-            border-bottom: 1px solid #ddd;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            margin-bottom: 15px;
+            position: relative;
         }
-        .booking-card:last-child {
-            border-bottom: none;
+        .details p {
+            margin: 5px 0;
         }
-        .user-image {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            margin-right: 15px;
-            object-fit: cover;
+       
+        .payment-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
         }
-        .details {
-            text-align: left;
-            flex-grow: 1;
-        }
-        .btn-status {
-            padding: 6px 12px;
-            border-radius: 5px;
-            font-size: 14px;
-            color: white;
-            font-weight: bold;
-            border: none;
-        }
-        .accepted {
+        .payment-badge {
             background: green;
-        }
-        .completed {
-            background: blue;
+            color: white;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 5px;
+            text-align: center;
+            width: fit-content;
+            margin-top: 5px;
         }
         .btn-next {
-            padding: 8px 15px;
-            background: #007bff;
+            background: #f1d313;
             color: white;
-            border: none;
-            border-radius: 5px;
+            padding: 10px 16px;
             font-size: 14px;
             font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .btn-next:hover {
-            background: #0056b3;
-        }
-        .btn-back {
-            display: inline-block;
-            padding: 10px 20px;
-            background: #007bff;
-            color: white;
             border-radius: 5px;
             text-decoration: none;
-            font-weight: bold;
-            margin-bottom: 15px;
+            display: inline-block;
+            margin-top: 8px;
+            text-align: center;
+            width: fit-content;
         }
-        .btn-back:hover {
-            background: #0056b3;
+        .btn-next:hover {
+            background: #fee74c;
+            color: #7a7373 !important;
         }
-        .btn-processing {
-            padding: 8px 15px;
-            background:rgb(30, 220, 84); /* Orange */
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: not-allowed;
-            margin-top: 10px;
-            float: right; /* Aligns to the right */
+    
+
+    .btn-back {
+    border-radius: 5px;
+    text-decoration: none !important;
+    font-weight: bold !important;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+.btn-back i {
+    font-size: 18px;
+    color: rgb(234, 204, 37); /* Ensures visibility */
+}
+
+.btn-back:hover i {
+    color: #e1f006;
+}
+        .footer-section {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 4px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
         }
-        
-  
+
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .booking-card {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 20px;
+            }
+            .details {
+                flex: 1;
+                text-align: left;
+            }
+            .payment-container {
+                text-align: center;
+                align-items: flex-end;
+            }
+            .header-container {
+        flex-direction: row;
+    }
+    .btn-back {
+        margin-top: 10px;
+        width: fit-content;
+    }
+}
         
     </style>
 </head>
 <body>
-
-    <div class="container">
-        <h2>Accepted Bookings</h2>
-    
+<div class="page-wrapper">
+        <!-- Logo Section -->
+        {% include 'worker_dashmenu.html' %}
+        <section class="acceptlist">
+            <div class="containerr">
+                <div class="header-container">
+                    <h2>Accepted Bookings</h2>
+                    <a href="{% url 'worker_dashboard' %}" class="btn-back"><i class="fa fa-arrow-left"></i></a>
+                </div>
+        
         {% for booking in accepted_bookings %}
             <div class="booking-card">
-                <img src="{{ booking.user.profile_picture.url }}" alt="User Image" class="user-image">
                 <div class="details">
-                    <p><strong>Booking ID:</strong> {{ booking.booking_id }}</p>  <!-- Added Booking ID -->
-                    <p><strong>Name:</strong> {{ booking.user.username }}</p>
+                    <p><strong>Booking ID:</strong> {{ booking.booking_id }}</p>
+                    <p><strong>Name:</strong> {{ booking.user.first_name }} {{ booking.user.last_name }}</p>
                     <p><strong>Service:</strong> {{ booking.service.service_name }}</p>
-                    <p><strong>Expected Date:</strong> {{ booking.expected_date }}</p>
+                    <p><strong>Date of work:</strong> {{ booking.expected_date }}</p>
                     <p><strong>Address:</strong> {{ booking.user.state }}, {{ booking.user.district }}, {{ booking.user.place }}, {{ booking.user.housename }}</p>
                     <p><strong>Email:</strong> {{ booking.user.email }}</p>
-                    <p><strong>Status:</strong> 
-                        <button class="btn-status {% if booking.status == 'completed' %}completed{% else %}accepted{% endif %}">
-                            {{ booking.status }}
-                        </button>
-                    </p>
-                    
-                    <!-- Show Next Button Only If Status is Completed -->
+                </div>
+
+                <!-- Payment Section -->
+                <div class="payment-container">
                     {% if booking.status|lower == "completed" %}
-                    {% if booking.payment %}
-                        <button class="btn-processing" style="float: green;">PAYMENT FORM SUBMITTED</button>
-                    {% else %}
-                        <a href="{% url 'worker_payment_form' booking.id %}" class="btn-next" style="float: right;">PAYMENT FORM</a>
+                        {% if booking.payment %}
+                            <span class="payment-badge"> PAYMENT FORM SUBMITTED</span>
+                        {% else %}
+                            <a href="{% url 'worker_payment_form' booking.id %}" class="btn-next">PAYMENT FORM</a>
+                        {% endif %}
                     {% endif %}
-                {% endif %}
-                
                 </div>
             </div>
         {% empty %}
-            <p>No accepted bookings found.</p>
+            <p style="text-align: center;">No accepted bookings found.</p>
         {% endfor %}
     </div>
-    
-    <!-- Back Button -->
-    <a href="javascript:history.back()" class="btn-back"><i class="fa fa-arrow-left"></i> Back</a>
-    
+</section>
+    <section class="footer-section">
+        {% include 'footer.html' %}
+    </section>
+</div>
+</body>
+</html>

@@ -6,7 +6,6 @@
     <title>Accepted Bookings</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        
         body, html {
             height: 100%;
             margin: 0;
@@ -21,21 +20,41 @@
             min-height: 100vh;
             overflow-y: auto;
         }
-            .containerr {
-                max-width: 1000px; 
-                margin: auto; 
-                background: white; 
-                padding: 20px; 
-                border-radius: 10px; 
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    .header-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 40px;
-    width: 100%;
-}
+        .containerr {
+            max-width: 1000px; 
+            margin: auto; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 10px; 
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        /* Filter Section */
+        .filters-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+        }
+
+        .filters-container input,
+        .filters-container select {
+            padding: 8px;
+            font-size: 14px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .filters-container input {
+            width: 200px;
+        }
 
         .booking-card {
             display: flex;
@@ -50,7 +69,7 @@
         .details p {
             margin: 5px 0;
         }
-       
+
         .payment-container {
             display: flex;
             flex-direction: column;
@@ -85,27 +104,26 @@
             background: #fee74c;
             color: #7a7373 !important;
         }
-    
 
-    .btn-back {
-    border-radius: 5px;
-    text-decoration: none !important;
-    font-weight: bold !important;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-.btn-back i {
-    font-size: 18px;
-    color: rgb(234, 204, 37); /* Ensures visibility */
-}
+        .btn-back {
+            border-radius: 5px;
+            text-decoration: none !important;
+            font-weight: bold !important;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-back i {
+            font-size: 18px;
+            color: rgb(234, 204, 37);
+        }
 
-.btn-back:hover i {
-    color: #e1f006;
-}
+        .btn-back:hover i {
+            color: #e1f006;
+        }
         .footer-section {
             text-align: center;
             background-color: #ffffff;
@@ -132,29 +150,37 @@
                 align-items: flex-end;
             }
             .header-container {
-        flex-direction: row;
-    }
-    .btn-back {
-        margin-top: 10px;
-        width: fit-content;
-    }
-}
-        
+                flex-direction: row;
+            }
+            .btn-back {
+                margin-top: 10px;
+                width: fit-content;
+            }
+        }
     </style>
 </head>
 <body>
 <div class="page-wrapper">
-        <!-- Logo Section -->
-        {% include 'worker_dashmenu.html' %}
-        <section class="acceptlist">
-            <div class="containerr">
-                <div class="header-container">
-                    <h2>Accepted Bookings</h2>
-                    <a href="{% url 'worker_dashboard' %}" class="btn-back"><i class="fa fa-arrow-left"></i></a>
-                </div>
-        
-        {% for booking in accepted_bookings %}
-            <div class="booking-card">
+    {% include 'worker_dashmenu.html' %}
+    <section class="acceptlist">
+        <div class="containerr">
+            <div class="header-container">
+                <h2>Accepted Bookings</h2>
+                <a href="{% url 'worker_dashboard' %}" class="btn-back"><i class="fa fa-arrow-left"></i></a>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="filters-container">
+                <input type="text" id="searchInput" placeholder="Search by Name or Booking ID" onkeyup="filterBookings()">
+                <select id="paymentFilter" onchange="filterBookings()">
+                    <option value="all">All</option>
+                    <option value="submitted">Payment Form Submitted</option>
+                    <option value="pending">Payment Form Pending</option>
+                </select>
+            </div>
+
+            {% for booking in accepted_bookings %}
+            <div class="booking-card" data-user-name="{{ booking.user.first_name }} {{ booking.user.last_name }}" data-payment="{% if booking.payment %}submitted{% else %}pending{% endif %}">
                 <div class="details">
                     <p><strong>Booking ID:</strong> {{ booking.booking_id }}</p>
                     <p><strong>Name:</strong> {{ booking.user.first_name }} {{ booking.user.last_name }}</p>
@@ -164,7 +190,6 @@
                     <p><strong>Email:</strong> {{ booking.user.email }}</p>
                 </div>
 
-                <!-- Payment Section -->
                 <div class="payment-container">
                     {% if booking.status|lower == "completed" %}
                         {% if booking.payment %}
@@ -175,14 +200,39 @@
                     {% endif %}
                 </div>
             </div>
-        {% empty %}
-            <p style="text-align: center;">No accepted bookings found.</p>
-        {% endfor %}
-    </div>
-</section>
+            {% empty %}
+                <p style="text-align: center;">No accepted bookings found.</p>
+            {% endfor %}
+        </div>
+    </section>
     <section class="footer-section">
         {% include 'footer.html' %}
     </section>
 </div>
+
+<!-- JavaScript for Filtering -->
+<script>
+    function filterBookings() {
+        let searchValue = document.getElementById("searchInput").value.toLowerCase();
+        let paymentFilter = document.getElementById("paymentFilter").value;
+        let bookings = document.querySelectorAll(".booking-card");
+
+        bookings.forEach(booking => {
+            let bookingID = booking.querySelector(".details p strong").nextSibling.textContent.trim().toLowerCase();
+            let userName = booking.getAttribute("data-user-name").toLowerCase();
+            let paymentStatus = booking.getAttribute("data-payment");
+
+            let matchesSearch = bookingID.includes(searchValue) || userName.includes(searchValue);
+            let matchesPayment = paymentFilter === "all" || paymentStatus === paymentFilter;
+
+            if (matchesSearch && matchesPayment) {
+                booking.style.display = "block";
+            } else {
+                booking.style.display = "none";
+            }
+        });
+    }
+</script>
+
 </body>
 </html>

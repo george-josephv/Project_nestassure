@@ -284,7 +284,7 @@
             <tbody>
                 {% for booking in bookings|dictsortreversed:"expected_date" %}
                 <tr>
-                    <td>{{ booking.worker.user.username }}</td>
+                    <td>{{ booking.worker.user.first_name }} {{ booking.worker.user.last_name }}</td>
                     <td>{{ booking.service.service_name }}</td>
                     <td>{{ booking.expected_date }}</td>
                     <td>

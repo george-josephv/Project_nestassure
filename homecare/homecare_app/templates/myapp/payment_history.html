@@ -119,8 +119,8 @@
                 <thead>
                     <tr>
                         <th>Booking ID</th>
-                        <th>Service</th>
                         <th>Worker Name</th>
+                        <th>Service</th>
                         <th>Total Amount</th>
                         <th>Paid On</th>
                         <th>Status</th>
@@ -130,8 +130,8 @@
                     {% for payment in paid_payments %}
                     <tr>
                         <td>{{ payment.booking.booking_id }}</td>
-                        <td>{{ payment.booking.service.service_name }}</td>
                         <td>{{ payment.booking.worker.user.first_name }} {{ payment.booking.worker.user.last_name }}</td>
+                        <td>{{ payment.booking.service.service_name }}</td>
                         <td>₹{{ payment.total_amount }}</td>
                         <td>{{ current_date|date:"F d, Y" }}</td>
                         <td><span class="status-paid">Paid</span></td>

@@ -329,3 +329,17 @@ def payment_history(request):
         'paid_payments': paid_payments,
         'current_date': current_date
     })
+
+
+@login_required
+def worker_payment_status(request):
+    worker = request.user.worker_profile  # Get logged-in worker's profile
+    payments = Payment.objects.filter(booking__worker=worker).order_by('-booking__booking_id')  # Sort by Booking ID (descending)
+
+    for payment in payments:
+        payment.your_earnings = payment.total_amount * Decimal("0.91")  # Worker gets 91%
+
+    context = {
+        'payments': payments,
+    }
+    return render(request, 'myapp/worker_payment_status.html', context)

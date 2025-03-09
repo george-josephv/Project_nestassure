@@ -1,0 +1,210 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            scroll-behavior: smooth;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .page-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+
+        .profile-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            padding: 20px;
+            margin-top: 80px;
+        }
+
+        .profile-container {
+            width: 100%;
+            max-width: 620px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            text-align: center;
+            position: relative;
+            padding: 20px;
+        }
+
+.header {
+    background: #FFD700;
+    padding: 50px 20px 60px;
+    color: white;
+    font-size: 18px;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-btn {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    color: white;
+    font-size: 16px;
+    text-decoration: none;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.back-btn i {
+    margin-right: 5px; /* Space between icon and text */
+}
+
+.back-btn:hover{
+    color: rgba(255, 255, 255, 0.769);
+}
+
+        .header h2 {
+            margin: 0;
+            font-size: 24px;
+            position: absolute;
+            top: 26px;
+            left: 20%;
+            transform: translateX(-50%);
+        }
+
+        .profile-photo {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: white;
+            object-fit: cover;
+            background: solid white;
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+        }
+
+.profile-photo:hover {
+    transform: translateX(-50%) scale(1.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.746);
+}
+
+        .profile-info {
+            padding: 100px 20px 20px;
+        }
+
+        .info-box {
+            background: hsla(0, 2%, 84%, 0.173);
+            border-radius: 7px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            font-size: 15px;
+            font-weight: bold;
+            color: #383434;
+            text-align: left;
+        }
+
+        .info-box i {
+            color: #141410;
+            font-size: 18px;
+            margin-right: 12px;
+        }
+
+        .edit-btn {
+            display: block;
+            width: 90%;
+            margin: 20px auto;
+            padding: 12px;
+            background: #FFD700;
+            color: rgb(22, 21, 21);
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            text-align: center;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .edit-btn:hover {
+            background: #ffe600c9;
+            transform: scale(1.05);
+            color: #2c2b2b;
+        }
+
+        .footer-section {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 4px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-wrapper">
+        <!-- Logo Section -->
+        {% include 'user_dashmenu.html' %}
+        <!-- Profile Section -->
+        <section class="profile-section">
+            <div class="profile-container">
+                <div class="header">
+                    <h2>{{ user.username|upper }}</h2>
+                    <a href="javascript:window.history.back();" class="back-btn">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </a>                </div>
+
+                {% if user.profile_picture %}
+                    <img src="{{ user.profile_picture.url }}" alt="User Photo" class="profile-photo">
+                {% else %}
+                    <img src="https://via.placeholder.com/140" alt="No Photo" class="profile-photo">
+                {% endif %}
+
+                <div class="profile-info">
+                    <div class="info-box"><i class="fas fa-user"></i> {{ user.first_name }} {{ user.last_name }}</div>
+                    <div class="info-box"><i class="fas fa-calendar"></i> {{ user.dob|default:"Not Provided" }}</div>
+                    <div class="info-box"><i class="fas fa-tint"></i> {{ user.blood_group|default:"Not Provided" }}</div>
+                    <div class="info-box"><i class="fas fa-phone"></i> {{ user.phone_number|default:"Not Provided" }}</div>
+                    <div class="info-box"><i class="fas fa-envelope"></i> {{ user.email|default:"Not Provided" }}</div>
+                    <div class="info-box"><i class="fas fa-map-marker-alt"></i> {{ user.state|default:"N/A" }}, {{ user.district|default:"N/A" }}, {{ user.place|default:"N/A" }}</div>
+                    <div class="info-box"><i class="fas fa-home"></i> {{ user.housename|default:"Not Provided" }}</div>
+
+                    {% if user.role == "worker" %}
+                        <div class="info-box"><i class="fas fa-briefcase"></i> Role: Worker</div>
+                    {% endif %}
+                    
+                    <a href="{% url 'edit_worker_profile' %}" class="edit-btn">Edit Profile</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Section -->
+        <section class="footer-section">
+            {% include 'footer.html' %}
+        </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

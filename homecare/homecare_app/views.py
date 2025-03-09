@@ -166,6 +166,26 @@ def edit_user_profile(request):
         form = EditProfileForm(instance=request.user)
 
     return render(request, 'myapp/edit_user_profile.html', {'form': form})
+
+
+
+@login_required
+def worker_my_profile(request):
+    return render(request, 'myapp/worker_my_profile.html', {'user': request.user})
+
+@login_required
+def edit_worker_profile(request):
+    if request.method == "POST":
+        form = EditProfileForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('worker_my_profile')
+    else:
+        form = EditProfileForm(instance=request.user)
+
+    return render(request, 'myapp/edit_worker_profile.html', {'form': form})
+
+
 # filter date 7 march 
 
 @login_required

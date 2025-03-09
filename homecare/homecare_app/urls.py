@@ -26,6 +26,8 @@ urlpatterns = [
     path('worker/bookings/update/<int:booking_id>/<str:status>/', views.update_booking_status, name='update_booking_status'),
     path('worker/accepted-bookings/', views.worker_accepted_bookings, name='worker_accepted_bookings'),
     path('worker/payment/<int:booking_id>/', views.worker_payment_form, name='worker_payment_form'),
+    path('worker_profile/', views.worker_my_profile, name='worker_my_profile'),
+    path('worker_profile/edit/', views.edit_worker_profile, name='edit_worker_profile'),
     
     # Payment
     path('payment-processing/', views.user_payment_processing_list, name='user_payment_processing_list'),

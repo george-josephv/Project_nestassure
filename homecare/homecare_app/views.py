@@ -365,3 +365,7 @@ def worker_payment_status(request):
         'payments': payments,
     }
     return render(request, 'myapp/worker_payment_status.html', context)
+
+@login_required
+def terms_conditions(request):
+    return render(request, 'myapp/terms_conditions.html')

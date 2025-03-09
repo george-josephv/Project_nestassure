@@ -34,5 +34,6 @@ urlpatterns = [
     path('payment/details/<int:booking_id>/', views.user_payment_details, name='user_payment_details'),
     path('payment/mark/<int:booking_id>/', views.mark_payment_done, name='mark_payment_done'),
     path('payment-history/', views.payment_history, name='payment_history'),
-    path('worker/payments/',views. worker_payment_status, name='worker_payment_status')
+    path('worker/payments/',views. worker_payment_status, name='worker_payment_status'),
+    path('terms-and-conditions/', views.terms_conditions, name='terms_conditions'),
 ]

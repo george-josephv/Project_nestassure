@@ -84,7 +84,7 @@
         }
         .btn-processing {
             padding: 8px 15px;
-            background: #ffa500; /* Orange */
+            background:rgb(30, 220, 84); /* Orange */
             color: white;
             border: none;
             border-radius: 5px;
@@ -123,15 +123,12 @@
                     <!-- Show Next Button Only If Status is Completed -->
                     {% if booking.status|lower == "completed" %}
                     {% if booking.payment %}
-                        {% if booking.payment.is_paid %}
-                            <button class="btn-processing" style="float: right; background: green;">Payment Completed</button>
-                        {% else %}
-                            <button class="btn-processing" style="float: right;">Payment Processing</button>
-                        {% endif %}
+                        <button class="btn-processing" style="float: green;">PAYMENT FORM SUBMITTED</button>
                     {% else %}
-                        <a href="{% url 'worker_payment_form' booking.id %}" class="btn-next" style="float: right;">Next</a>
+                        <a href="{% url 'worker_payment_form' booking.id %}" class="btn-next" style="float: right;">PAYMENT FORM</a>
                     {% endif %}
                 {% endif %}
+                
                 </div>
             </div>
         {% empty %}

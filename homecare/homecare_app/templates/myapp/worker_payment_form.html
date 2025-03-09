@@ -68,29 +68,47 @@
         function calculateTotal() {
             let hours = parseInt(document.getElementById("hours").value) || 0;
             let minutes = parseInt(document.getElementById("minutes").value) || 0;
+    
+            // If both fields are zero, prevent calculation
+            if (hours === 0 && minutes === 0) {
+                document.getElementById("total_amount").value = "";
+                return;
+            }
+    
             let totalHours = hours + (minutes / 60);
             let ratePerHour = parseFloat("{{ booking.service.rate_per_hour }}");
+    
             let totalAmount = totalHours * ratePerHour;
             document.getElementById("total_amount").value = totalAmount.toFixed(2);
         }
-
+    
         function confirmPayment(event) {
             event.preventDefault(); // Prevent form submission
-
+    
+            let hours = document.getElementById("hours").value;
+            let minutes = document.getElementById("minutes").value;
             let totalAmount = document.getElementById("total_amount").value;
-
+    
+            // Validation: At least one field (hours or minutes) must be filled
+            if ((hours === "" || hours === "0") && (minutes === "" || minutes === "0")) {
+                alert("⚠️ Please enter either Hours or Minutes!");
+                return;
+            }
+    
             // Show the popup
             document.getElementById("popup-message").innerText = "Your total amount = ₹" + totalAmount;
             document.getElementById("popup").style.display = "block";
             document.getElementById("overlay").style.display = "block";
         }
-
+    
         function closePopup() {
             document.getElementById("popup").style.display = "none";
             document.getElementById("overlay").style.display = "none";
             document.getElementById("payment-form").submit(); // Submit form after closing popup
         }
     </script>
+    
+    
 </head>
 <body>
 

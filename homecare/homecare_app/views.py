@@ -229,7 +229,7 @@ def update_booking_status(request, booking_id, status):
 @login_required
 def worker_accepted_bookings(request):
     worker = request.user.worker_profile
-    accepted_bookings = Booking.objects.filter(worker=worker, status__in=['accepted', 'completed'])
+    accepted_bookings = Booking.objects.filter(worker=worker, status__in=['completed'])
 
     # Get paid bookings from session
     paid_bookings = request.session.get("paid_bookings", [])

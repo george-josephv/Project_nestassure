@@ -26,7 +26,17 @@
             overflow-y: auto;
         }
 
+        .header-container {
+    display: flex;
+    justify-content: space-between; /* Pushes elements to opposite sides */
+    align-items: center;
+    margin-bottom: 40px;
+    width: 100%;
+}
 
+.btn-back {
+    margin-left: auto; /* Pushes the button to the right */
+}
         .invoice-container {
             max-width: 700px;
             margin: 0 auto;
@@ -35,6 +45,7 @@
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
+        
         .header-section {
             display: flex;
             justify-content: space-between;
@@ -226,8 +237,13 @@
     <section class="payment-section">
 <div class="container mt-4">
     <!-- <h2 class="text-center">Payment Details</h2> -->
+    
     <div class="invoice-container">
         <!-- Header Section -->
+        <div class="header-container">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="fa fa-arrow-left"></i>
+            </a></div>
         <div class="header-section">
             <div>{{ expected_date }}</div>
             {% if is_paid %}

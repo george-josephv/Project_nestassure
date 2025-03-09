@@ -229,7 +229,7 @@ def update_booking_status(request, booking_id, status):
 @login_required
 def worker_accepted_bookings(request):
     worker = request.user.worker_profile
-    accepted_bookings = Booking.objects.filter(worker=worker, status__in=['completed'])
+    accepted_bookings = Booking.objects.filter(worker=worker, status__in=['completed']).order_by('-id')
 
     # Get paid bookings from session
     paid_bookings = request.session.get("paid_bookings", [])
@@ -239,6 +239,8 @@ def worker_accepted_bookings(request):
         'paid_bookings': paid_bookings
     })
     
+
+
 @login_required
 def worker_payment_form(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id)

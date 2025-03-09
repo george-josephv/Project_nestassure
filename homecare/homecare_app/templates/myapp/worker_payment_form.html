@@ -6,13 +6,67 @@
     <title>Worker Payment Form</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: Arial, sans-serif; background: #f5f5f5; text-align: center; padding: 20px; }
-        .container { max-width: 700px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
-        .form-group { text-align: left; margin-bottom: 15px; }
-        .form-group label { font-weight: bold; }
-        .form-group select, .form-group input { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px; }
-        .btn-submit { padding: 10px 20px; background: green; color: white; border: none; border-radius: 5px; cursor: pointer; }
-        .btn-submit:hover { background: darkgreen; }
+  body, html {
+            height: 100%;
+            margin: 0;
+            scroll-behavior: smooth;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+        .page-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+        .header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+.containerr { 
+    max-width: 700px; 
+    margin: auto; 
+    background: white; 
+    padding: 20px; 
+    border-radius: 10px; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+}
+
+.form-group { 
+    text-align: left; 
+    margin-bottom: 15px; 
+}
+
+.form-group label { 
+    font-weight: bold; 
+}
+
+.form-group select, 
+.form-group input { 
+    width: 100%; 
+    padding: 8px; 
+    margin-top: 5px; 
+    border: 1px solid #ddd; 
+    border-radius: 5px; 
+}
+
+.btn-submit { 
+    padding: 10px 20px; 
+    background: #FED136; 
+    color: white; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    
+}
+
+.btn-submit:hover { 
+    background: #ffc800; 
+}
+
         .btn-processing {
             padding: 10px 20px;
             background: #ffa500;
@@ -44,14 +98,14 @@
         }
         .popup button {
             padding: 10px 15px;
-            background: #007bff;
+            background: #FED136;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
         .popup button:hover {
-            background: #0056b3;
+            background: #e6b811;
         }
         .overlay {
             display: none;
@@ -62,6 +116,14 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
             z-index: 999;
+        }
+        .footer-section {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 4px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
         }
     </style>
     <script>
@@ -111,9 +173,17 @@
     
 </head>
 <body>
+    <div class="page-wrapper">
 
-<div class="container">
-    <h2>Worker Payment Form</h2>
+ {% include 'worker_dashmenu.html' %}
+ <section class="paymentform">
+
+<div class="containerr">
+    <div class="header-container">
+        <h2>Worker Payment Form</h2>
+        <a href="javascript:history.back()" class="btn-back">
+            <i class="fa fa-arrow-left"></i>
+        </a></div>
     <form method="POST" id="payment-form" onsubmit="confirmPayment(event)">
         {% csrf_token %}
 
@@ -188,6 +258,10 @@
     <div class="popup-content" id="popup-message"></div>
     <button onclick="closePopup()">OK</button>
 </div>
-
+ </section>
+<section class="footer-section">
+    {% include 'footer.html' %}
+</section>
+</div>
 </body>
 </html>

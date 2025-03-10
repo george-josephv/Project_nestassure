@@ -20,12 +20,28 @@
             padding: 35px;
             border-radius: 12px;
             box-shadow: 0px 5px 15px rgba(255, 193, 7, 0.3);
+            position: relative;
+        }
+
+        /* Back Button */
+        .back-button {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 24px;
+            color: #ffc107;
+            text-decoration: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .back-button:hover {
+            color: #ffdd44;
         }
 
         /* Heading Styles */
         h1 {
             text-align: center;
-            color: #ffc107; /* Dark Yellow */
+            color: #ffc107;
             margin-bottom: 20px;
             font-size: 30px;
             text-transform: uppercase;
@@ -33,7 +49,7 @@
             padding-bottom: 10px;
         }
         h2 {
-            color: #e6ac00; /* Slightly deeper yellow */
+            color: #e6ac00;
             margin-top: 25px;
             border-left: 5px solid #e6ac00;
             padding-left: 12px;
@@ -98,14 +114,20 @@
             p, ul li {
                 font-size: 14px;
             }
+            .back-button {
+                font-size: 20px;
+                top: 10px;
+                left: 10px;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <a href="javascript:history.back()" class="back-button">&#9664;</a> <!-- Solid Back Arrow -->
+
     <h1>Terms and Conditions for Workers</h1>
-    
 
     <h2>1. Registration & Eligibility</h2>
     <ul>
@@ -163,7 +185,7 @@
     <p>By registering and using this platform, you confirm that you have read, understood, and agreed to these Terms and Conditions.</p>
 
     <footer>
-        <p>For any queries, contact <strong>  nestassure@gmail.com  |  8976787889</strong>.</p>
+        <p>For any queries, contact <strong>nestassure@gmail.com | 8976787889</strong>.</p>
     </footer>
 </div>
 

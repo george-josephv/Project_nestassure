@@ -216,193 +216,181 @@
 
 </style>
 
-        <!-- Services Section -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-        <!-- Services Section -->
+<!-- Services Section -->
 <section class="page-section bg-light" id="portfolio">
-    <div class="container">
-        <div class="text-center">
-            <h2 class="section-heading text-uppercase">Our Services</h2>
-            <h3 class="section-subheading text-muted">Explore the services we offer</h3>
-        </div>
-        <div class="row">
-            {% for service in services|slice:":6" %}  {# Show only first 6 services #}
-            <div class="col-lg-4 col-sm-6 mb-4">
-                <div class="flip-card-container">
-                    <div class="flip-card">
-                        <div class="flip-card-inner">
-                            <!-- Front Side (Image) -->
-                            <div class="flip-card-front">
-                                <img src="{% static 'myapp/images/' %}{{ service.service_name|lower }}.jpg" alt="{{ service.service_name }}" class="service-img">
-                            </div>
-                            <!-- Back Side (Description) -->
-                            <div class="flip-card-back">
-                                <h4 class="description-heading">Description</h4>
-                                <p class="service-description">{{ service.description }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Service Name (Always Visible Below the Card) -->
-                    <h4 class="service-name">{{ service.service_name }}</h4>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        
-
-        <!-- Hidden Services (Initially Hidden) -->
-        <div class="row" id="more-services" style="display: none;">
-            {% for service in services|slice:"6:" %} {# Show services after the first 6 #}
-            <div class="col-lg-4 col-sm-6 mb-4">
-                <div class="flip-card">
-                    <div class="flip-card-inner">
-                        <!-- Front Side (Image & Service Name) -->
-                        <div class="flip-card-front">
-                            <img src="{% static 'myapp/images/' %}{{ service.service_name|lower }}.jpg" alt="{{ service.service_name }}" class="service-img">
-                            <h4 class="service-name">{{ service.service_name }}</h4>
-                        </div>
-                        <!-- Back Side (Description) -->
-                        <div class="flip-card-back">
-                            <h4 class="description-heading">Description</h4>
-                            <p class="service-description">{{ service.description }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-
-        <!-- Show More / Show Less Button -->
-        {% if services|length > 6 %}
-        <div class="text-center mt-4">
-            <button class="btn btn-primary" id="toggle-services">Show More</button>
-        </div>
-        {% endif %}
+  <div class="container custom-container">
+    <div class="text-center mb-4">
+      <h2 class="section-heading text-uppercase">Our Services</h2>
+      <h3 class="section-subheading text-muted">Explore the services we offer</h3>
     </div>
+
+    <!-- Scrolling Service Cards -->
+    <div class="scroll-container-wrapper">
+      <div class="scroll-container">
+        {% for service in services %}
+        <div class="service-card">
+          <img src="{% static 'myapp/images/' %}{{ service.service_name|lower }}.jpg"
+               alt="{{ service.service_name }}"
+               class="scroll-img"
+               data-bs-toggle="modal"
+               data-bs-target="#serviceModal"
+               data-title="{{ service.service_name }}"
+               data-description="{{ service.description }}"
+               data-image="{% static 'myapp/images/' %}{{ service.service_name|lower }}.jpg">
+          <div class="service-text">
+            <h4>{{ service.service_name }}</h4>
+          </div>
+        </div>
+        {% endfor %}
+        {% for service in services %}
+        <div class="service-card">
+          <img src="{% static 'myapp/images/' %}{{ service.service_name|lower }}.jpg"
+               alt="{{ service.service_name }}"
+               class="scroll-img"
+               data-bs-toggle="modal"
+               data-bs-target="#serviceModal"
+               data-title="{{ service.service_name }}"
+               data-description="{{ service.description }}"
+               data-image="{% static 'myapp/images/' %}{{ service.service_name|lower }}.jpg">
+          <div class="service-text">
+            <h4>{{ service.service_name }}</h4>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- jQuery for Show More / Show Less Effect -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Modal -->
+<div class="modal fade" id="serviceModal" tabindex="-1" aria-labelledby="serviceModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content rounded-4 shadow position-relative">
+      <div class="modal-header">
+        <h5 class="modal-title" id="serviceModalLabel"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body d-flex flex-column flex-md-row align-items-start" style="padding-bottom: 60px;">
+        <img id="modalServiceImage" src="" alt="Service" class="img-fluid rounded mb-3 mb-md-0 me-md-4" style="max-width: 300px; height: auto;">
+        <p id="serviceModalDescription" class="mb-0"></p>
+      </div>
+      <!-- Book Now Button Fixed at Bottom Right -->
+      <a href="{% url 'login' %}" class="btn btn-primary position-absolute" style="bottom: 15px; right: 20px;">
+        Book Now
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Modal Script -->
 <script>
-    $(document).ready(function () {
-        $("#toggle-services").click(function () {
-            $("#more-services").slideToggle(500);
-            if ($(this).text() === "Show More") {
-                $(this).text("Show Less");
-            } else {
-                $(this).text("Show More");
-            }
-        });
-    });
+  const serviceModal = document.getElementById('serviceModal');
+  serviceModal.addEventListener('show.bs.modal', function (event) {
+    const img = event.relatedTarget;
+    const title = img.getAttribute('data-title');
+    const description = img.getAttribute('data-description');
+    const imageUrl = img.getAttribute('data-image');
+
+    serviceModal.querySelector('.modal-title').textContent = title;
+    serviceModal.querySelector('#serviceModalDescription').textContent = description;
+    serviceModal.querySelector('#modalServiceImage').src = imageUrl;
+  });
 </script>
 
-<!-- Custom Styles -->
+<!-- Custom CSS -->
 <style>
-     /* Flip Card Container */
-.flip-card-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 40px; /* More spacing between cards */
+/* Custom container class */
+.custom-container {
+  max-width: 1200px; /* Adjust the width here */
+  margin: 0 auto;
 }
 
-/* Flip Card */
-.flip-card {
-    background: transparent;
-    width: 100%;
-    height: 400px; /* Increased height for better image spacing */
-    perspective: 1000px;
+/* Scrolling Container */
+.scroll-container-wrapper {
+  overflow: hidden;
+  width: 100%;
+  padding: 10px 0;
 }
 
-/* Flip Card Inner */
-.flip-card-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    transition: transform 0.6s;
-    transform-style: preserve-3d;
+.scroll-container {
+  display: flex;
+  gap: 20px;
+  animation: scroll-left 40s linear infinite;
+  width: max-content;
 }
 
-/* Flip on Hover */
-.flip-card:hover .flip-card-inner {
-    transform: rotateY(180deg);
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
-/* Front & Back Side */
-.flip-card-front,
-.flip-card-back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-    box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.2);
+/* Service Card */
+.service-card {
+  flex: 0 0 auto;
+  width: 220px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  text-align: center;
+  transition: transform 0.3s;
+  cursor: pointer;
 }
 
-/* Front Side */
-.flip-card-front {
-    background: white;
+.service-card:hover {
+  transform: scale(1.05);
 }
 
-.flip-card-front .service-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 12px;
+.scroll-img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
 }
 
-/* Back Side */
-.flip-card-back {
-    background: #343a40; 
-    color: white;
-    transform: rotateY(180deg);
-    padding: 20px;
-    border-radius: 12px;
+.service-text {
+  padding: 10px;
 }
 
-/* Service Description */
-.description-heading {
-    color: #ffcc00; /* Dark Yellow */
-    font-size: 1.4rem;
-    font-weight: bold;
-    margin-bottom: 10px;
+.service-text h4 {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 6px;
 }
 
-.service-description {
-    color: white;
-    font-size: 1rem;
-    text-align: center;
-    padding: 0 15px;
+/* Responsive */
+@media (max-width: 576px) {
+  .service-card {
+    width: 160px;
+  }
+
+  .scroll-img {
+    height: 100px;
+  }
+
+  #modalServiceImage {
+    max-width: 100%;
+    margin-bottom: 15px;
+  }
 }
 
-/* Service Name (Always Visible) */
-.service-name {
-    margin-top: 10px;
-    font-size: 1.3rem;
-    font-weight: bold;
-    text-align: center;
-    color: black;
+/* Modal Blur Background */
+.modal-backdrop.show {
+  backdrop-filter: blur(5px);
+  background-color: rgba(0, 0, 0, 0.3);
 }
-
-/* Row Spacing */
-.row {
-    margin-bottom: 30px; /* More spacing between rows */
-}
-
-/* Show More Button */
-#toggle-services {
-    padding: 12px 24px;
-    font-size: 1.1rem;
-    border-radius: 25px;
-    margin-top: 10px;
-}
-
 </style>
+
+
+
 
 
         <!-- About-->
@@ -436,217 +424,7 @@
        {% include 'footer.html' %}
  <!-- Footer end -->
 
-        <!-- Portfolio Modals-->
-        <!-- Portfolio item 1 modal popup-->
-        <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="close-modal" data-bs-dismiss="modal"><img src="assets/img/close-icon.svg" alt="Close modal" /></div>
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-8">
-                                <div class="modal-body">
-                                    <!-- Project details-->
-                                    <h2 class="text-uppercase">Plumbing</h2>
-                                    <p class="item-intro text-muted">Lorem ipsum dolor sit amet consectetur.</p>
-                                    <img class="img-fluid d-block mx-auto" src="assets/img/portfolio/1.jpg" alt="..." />
-                                    <p>Use this area to describe your project. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!</p>
-                                    <ul class="list-inline">
-                                        <li>
-                                            <strong>Client:</strong>
-                                            Threads
-                                        </li>
-                                        <li>
-                                            <strong>Category:</strong>
-                                            Illustration
-                                        </li>
-                                    </ul>
-                                    <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
-                                        <i class="fas fa-xmark me-1"></i>
-                                        Close Project
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Portfolio item 2 modal popup-->
-        <div class="portfolio-modal modal fade" id="portfolioModal2" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="close-modal" data-bs-dismiss="modal"><img src="assets/img/close-icon.svg" alt="Close modal" /></div>
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-8">
-                                <div class="modal-body">
-                                    <!-- Project details-->
-                                    <h2 class="text-uppercase">Project Name</h2>
-                                    <p class="item-intro text-muted">Lorem ipsum dolor sit amet consectetur.</p>
-                                    <img class="img-fluid d-block mx-auto" src="assets/img/portfolio/2.jpg" alt="..." />
-                                    <p>Use this area to describe your project. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!</p>
-                                    <ul class="list-inline">
-                                        <li>
-                                            <strong>Client:</strong>
-                                            Explore
-                                        </li>
-                                        <li>
-                                            <strong>Category:</strong>
-                                            Graphic Design
-                                        </li>
-                                    </ul>
-                                    <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
-                                        <i class="fas fa-xmark me-1"></i>
-                                        Close Project
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Portfolio item 3 modal popup-->
-        <div class="portfolio-modal modal fade" id="portfolioModal3" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="close-modal" data-bs-dismiss="modal"><img src="assets/img/close-icon.svg" alt="Close modal" /></div>
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-8">
-                                <div class="modal-body">
-                                    <!-- Project details-->
-                                    <h2 class="text-uppercase">Project Name</h2>
-                                    <p class="item-intro text-muted">Lorem ipsum dolor sit amet consectetur.</p>
-                                    <img class="img-fluid d-block mx-auto" src="assets/img/portfolio/3.jpg" alt="..." />
-                                    <p>Use this area to describe your project. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!</p>
-                                    <ul class="list-inline">
-                                        <li>
-                                            <strong>Client:</strong>
-                                            Finish
-                                        </li>
-                                        <li>
-                                            <strong>Category:</strong>
-                                            Identity
-                                        </li>
-                                    </ul>
-                                    <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
-                                        <i class="fas fa-xmark me-1"></i>
-                                        Close Project
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Portfolio item 4 modal popup-->
-        <div class="portfolio-modal modal fade" id="portfolioModal4" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="close-modal" data-bs-dismiss="modal"><img src="assets/img/close-icon.svg" alt="Close modal" /></div>
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-8">
-                                <div class="modal-body">
-                                    <!-- Project details-->
-                                    <h2 class="text-uppercase">Project Name</h2>
-                                    <p class="item-intro text-muted">Lorem ipsum dolor sit amet consectetur.</p>
-                                    <img class="img-fluid d-block mx-auto" src="assets/img/portfolio/4.jpg" alt="..." />
-                                    <p>Use this area to describe your project. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!</p>
-                                    <ul class="list-inline">
-                                        <li>
-                                            <strong>Client:</strong>
-                                            Lines
-                                        </li>
-                                        <li>
-                                            <strong>Category:</strong>
-                                            Branding
-                                        </li>
-                                    </ul>
-                                    <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
-                                        <i class="fas fa-xmark me-1"></i>
-                                        Close Project
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Portfolio item 5 modal popup-->
-        <div class="portfolio-modal modal fade" id="portfolioModal5" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="close-modal" data-bs-dismiss="modal"><img src="assets/img/close-icon.svg" alt="Close modal" /></div>
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-8">
-                                <div class="modal-body">
-                                    <!-- Project details-->
-                                    <h2 class="text-uppercase">Project Name</h2>
-                                    <p class="item-intro text-muted">Lorem ipsum dolor sit amet consectetur.</p>
-                                    <img class="img-fluid d-block mx-auto" src="assets/img/portfolio/5.jpg" alt="..." />
-                                    <p>Use this area to describe your project. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!</p>
-                                    <ul class="list-inline">
-                                        <li>
-                                            <strong>Client:</strong>
-                                            Southwest
-                                        </li>
-                                        <li>
-                                            <strong>Category:</strong>
-                                            Website Design
-                                        </li>
-                                    </ul>
-                                    <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
-                                        <i class="fas fa-xmark me-1"></i>
-                                        Close Project
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Portfolio item 6 modal popup-->
-        <div class="portfolio-modal modal fade" id="portfolioModal6" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="close-modal" data-bs-dismiss="modal"><img src="assets/img/close-icon.svg" alt="Close modal" /></div>
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-8">
-                                <div class="modal-body">
-                                    <!-- Project details-->
-                                    <h2 class="text-uppercase">Project Name</h2>
-                                    <p class="item-intro text-muted">Lorem ipsum dolor sit amet consectetur.</p>
-                                    <img class="img-fluid d-block mx-auto" src="assets/img/portfolio/6.jpg" alt="..." />
-                                    <p>Use this area to describe your project. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!</p>
-                                    <ul class="list-inline">
-                                        <li>
-                                            <strong>Client:</strong>
-                                            Window
-                                        </li>
-                                        <li>
-                                            <strong>Category:</strong>
-                                            Photography
-                                        </li>
-                                    </ul>
-                                    <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
-                                        <i class="fas fa-xmark me-1"></i>
-                                        Close Project
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Core theme JS-->

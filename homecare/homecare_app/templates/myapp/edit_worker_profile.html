@@ -238,62 +238,90 @@
                         <div class="form-group">
                             <label for="id_username">User Name</label>
                             {{ form.username }}
+                            {% for error in form.username.errors %}
+                                <div class="alert alert-danger">{{ error }}</div>
+                            {% endfor %}
                         </div>
-
-                        <div class="form-group">
-                            <label for="id_username">First Name</label>
-                            {{ form.first_name }}
-                        </div>
-
                         
                         <div class="form-group">
-                            <label for="id_username">Last Name</label>
-                            {{ form.last_name }}
+                            <label for="id_first_name">First Name</label>
+                            {{ form.first_name }}
+                            {% for error in form.first_name.errors %}
+                                <div class="alert alert-danger">{{ error }}</div>
+                            {% endfor %}
                         </div>
-
-
-
+                        
+                        <div class="form-group">
+                            <label for="id_last_name">Last Name</label>
+                            {{ form.last_name }}
+                            {% for error in form.last_name.errors %}
+                                <div class="alert alert-danger">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
                         <div class="form-group">
                             <label for="id_email">Email</label>
                             {{ form.email }}
+                            {% for error in form.email.errors %}
+                                <div class="alert alert-danger">{{ error }}</div>
+                            {% endfor %}
                         </div>
                         
-
                         <div class="form-group">
                             <label for="id_phone_number">Phone Number</label>
                             {{ form.phone_number }}
+                            {% for error in form.phone_number.errors %}
+                                <div class="alert alert-danger">{{ error }}</div>
+                            {% endfor %}
                         </div>
-
+                        
                         <div class="form-group">
                             <label for="id_dob">Date of Birth</label>
                             {{ form.dob }}
+                            {% for error in form.dob.errors %}
+                                <div class="alert alert-danger">{{ error }}</div>
+                            {% endfor %}
                         </div>
-
+                        
                         <div class="form-group">
                             <label for="id_blood_group">Blood Group</label>
                             {{ form.blood_group }}
+                            {% for error in form.blood_group.errors %}
+                                <div class="alert alert-danger">{{ error }}</div>
+                            {% endfor %}
                         </div>
-
+                        
                         <div class="form-group">
                             <label for="id_state">State</label>
                             {{ form.state }}
+                            {% for error in form.state.errors %}
+                                <div class="alert alert-danger">{{ error }}</div>
+                            {% endfor %}
                         </div>
-
+                        
                         <div class="form-group">
-                            <label for="id_state">District</label>
-                            {{ form.district}}
+                            <label for="id_district">District</label>
+                            {{ form.district }}
+                            {% for error in form.district.errors %}
+                                <div class="alert alert-danger">{{ error }}</div>
+                            {% endfor %}
                         </div>
-
+                        
                         <div class="form-group">
-                            <label for="id_state">Place</label>
+                            <label for="id_place">Place</label>
                             {{ form.place }}
+                            {% for error in form.place.errors %}
+                                <div class="alert alert-danger">{{ error }}</div>
+                            {% endfor %}
                         </div>
-
+                        
                         <div class="form-group">
-                            <label for="id_state">House</label>
+                            <label for="id_housename">House</label>
                             {{ form.housename }}
+                            {% for error in form.housename.errors %}
+                                <div class="alert alert-danger">{{ error }}</div>
+                            {% endfor %}
                         </div>
-
                         <button type="submit" class="edit-btn">Update Profile</button>
                     </form>
                 </div>

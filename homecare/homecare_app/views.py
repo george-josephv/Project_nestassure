@@ -10,6 +10,7 @@ from django.http import JsonResponse
 from decimal import Decimal
 from django.utils.timezone import now
 from django.db.models import Q
+import re
 
 
 
@@ -54,29 +55,60 @@ def worker_logout(request):
     return redirect("landing")  # Redirect instead of render
 
 
+
 def signup_view(request):
     if request.method == "POST":
-        username = request.POST.get("username")
-        email = request.POST.get("email")
+        username = request.POST.get("username", "").strip()
+        email = request.POST.get("email", "").strip()
         password = request.POST.get("password")
         confirm_password = request.POST.get("confirm-password")
         role = request.POST.get("role")
 
+        # Reject if username contains any whitespace
+        if re.search(r'\s', username):
+            messages.error(request, "Username must not contain spaces.")
+            return redirect("signup")
+
+        # Check if all fields are filled
+        if not username or not email or not password or not confirm_password or not role:
+            messages.error(request, "All fields are required.")
+            return redirect("signup")
+
+        # Check if passwords match
         if password != confirm_password:
             messages.error(request, "Passwords do not match.")
             return redirect("signup")
 
+        # Check for existing username
         if User.objects.filter(username=username).exists():
             messages.error(request, "Username already taken.")
             return redirect("signup")
 
+        # Email format check
+        email_pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+        if not re.match(email_pattern, email):
+            messages.error(request, "Enter a valid email address.")
+            return redirect("signup")
+
+        # Check for existing email
         if User.objects.filter(email=email).exists():
             messages.error(request, "Email already registered.")
             return redirect("signup")
 
-        user = User.objects.create_user(username=username, email=email, password=password, role=role)
+        # Password strength validation
+        password_pattern = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$'
+        if not re.match(password_pattern, password):
+            messages.error(
+                request,
+                "Password must be at least 8 characters and include uppercase, lowercase, number, and special character."
+            )
+            return redirect("signup")
+
+        # Create user (remove `role` unless it's in your custom user model)
+        user = User.objects.create_user(username=username, email=email, password=password)
         login(request, user)
 
+        messages.success(request, "Account created successfully!")
         return redirect("login")
 
     return render(request, "myapp/signup.html")

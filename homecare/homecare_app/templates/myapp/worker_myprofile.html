@@ -167,7 +167,7 @@
             <div class="profile-container">
                 <div class="header">
                     <h2>{{ worker.user.username|upper }}</h2>
-                    <a href="javascript:window.history.back();" class="back-btn">
+                    <a href="{% url 'worker_dashboard' %}" class="back-btn">
                         <i class="fas fa-arrow-left"></i> Back
                     </a>
                 </div>

@@ -92,6 +92,14 @@
 }
 
 body {
+  /* Layout and background settings from the first block */
+  height: 100vh;
+  background: linear-gradient(to right, #f8fafc, #e0f7fa);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* Bootstrap-based settings from the second block (most important) */
   margin: 0;
   font-family: var(--bs-body-font-family);
   font-size: var(--bs-body-font-size);
@@ -103,6 +111,7 @@ body {
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
+
 
 hr {
   margin: 1rem 0;
